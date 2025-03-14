@@ -1,0 +1,16 @@
+Before we install Hakrawler, we will make certain that our apt is up-to-date. To do this, we can issue the apt update -y command.
+
+sudo apt update -y
+
+install
+
+sudo apt update -y
+which hakrawler
+hakrawler --help
+
+We cat the information stored in urls.txt in the same directory where we created it. Then, we pipe those URLs to be handled by Hakrawler and finally review the output below.
+
+echo "https://www.target.com/" > urls.txt
+cat urls.txt |./hakrawler
+
+

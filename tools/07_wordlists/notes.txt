@@ -1,0 +1,33 @@
+SecLists install
+
+sudo apt-get install -y seclists
+
+move to
+
+cd /usr/share/seclists/
+
+show all
+
+ls -lsa
+ls -lsaht
+
+Cewl a wordlist generating tool
+
+which cewl
+cewl --help
+
+generate wordlist with Cewl
+
+sudo cewl -d 2 -m 5 -w ourWordlist.txt www.target.com
+ls -lsa ourWordlist.txt
+
+show all
+
+cat ourWordlist.txt
+
+make use of sed to remove any extra spaces. Lastly, we can make certain there are no duplicate values by piping all output to sort with a parameter of -u indicating that we only want unique results. Naturally, we would like to save our output, so we use the greater-than symbol (>) to pipe all output to binaries-wordlist.txt.
+
+ls -sa /usr/bin | sed 's/[0-9]*//g' | sed -r 's/\s+//g' |sort -u > $HOME/binaries-wordlist.txt
+cat $HOME/binaries-wordlist.txt
+
+
