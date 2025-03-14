@@ -30,4 +30,23 @@ make use of sed to remove any extra spaces. Lastly, we can make certain there ar
 ls -sa /usr/bin | sed 's/[0-9]*//g' | sed -r 's/\s+//g' |sort -u > $HOME/binaries-wordlist.txt
 cat $HOME/binaries-wordlist.txt
 
+SecLists contains multiple wordlists that cover discovery, fuzzing, common passwords, and web shells. We can install SecLists by cloning the repo to a directory of our choice or using Kali's package manager.
+
+sudo apt install seclists
+ls -lh /usr/share/seclists
+
+Payloads All The Things is another useful collection of wordlists focused on exploitation. As with SecLists, we can clone the repo from GitHub or install it with Kali's package manager.
+
+sudo apt install payloadsallthethings
+ls -lh /usr/share/payloadsallthethings
+
+Create custom wordlists
+
+cewl --write output.txt --lowercase -m 4 http://enum-sandbox/manual
+tail output.txt
+
+we could use ls to get the contents of /usr/bin, pipe the results to grep, use -v / to exclude directories, and redirect the results to a file.
+
+ls /usr/bin | grep -v "/" > binaries.txt
+tail binaries.txt
 
