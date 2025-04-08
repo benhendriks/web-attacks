@@ -140,3 +140,20 @@ sudo cp /var/www/html/ofbiz.html /var/www/html/ofbiz1.html
 </body>
 </html>
 
+Our practice application includes an additional endpoint with flawed allowlist functionality. Let's use curl to send a request to the endpoint. We'll set -X "OPTIONS" to send an OPTIONS request, -i to include headers on the output, -k to allow insecure server connections when using SSL, and finally, the URL.
+
+curl -X "OPTIONS" -i -k https://sandbox/allowlist
+
+We didn't specify an Origin header on our request, but the server responded with an Access-Control-Allow-Origin header with the value "https://target-security.com". Perhaps that is the only allowed origin. However, let's try sending a request with an Origin header that includes a modification of that value. We'll use curl again and set -H Origin: http://www.target-security.com to add an Origin header.
+
+curl -X "OPTIONS" -i -H "Origin: http://www.target-security.com" -k https://sandbox/allowlist
+
+The server responded with an Access-Control-Allow-Origin value that matches the value we submitted but we only changed the protocol and subdomain. Let's try modifying the end of it too.
+
+curl -X "OPTIONS" -i -H "Origin: http://www.target-security.net" -k https://sandbox/allowlist
+
+What will happen if we alter the domain name by prepending something to change the domain name? Let's try it out. We'll use curl again and change the value of the Origin header to "http://fakeotarget-security.com".
+
+curl -X "OPTIONS" -i -H "Origin: http://faketarget-security.com" -k https://sandbox/allowlist
+
+
