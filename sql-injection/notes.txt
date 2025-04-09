@@ -1,0 +1,29 @@
+When we write a SELECT query, we need to specify what data we want and where we want it from. The "what" is formatted as a list of one or more columns. We can also use an asterisk (*) as a wildcard to query for all columns in a table. The "where" indicates which tables we want to use. We'll start with a basic example that selects data from one table.
+
+SELECT * FROM menu;
+
+We can use the version() function to retrieve the version of a MySQL database.
+
+select version();
+
+We can obtain the user account currently connected to a MySQL database with the current_user() or system_user() functions. We should keep in mind that this is a user account for the database, and does not necessarily correspond to an OS-level user.
+
+select current_user();
+
+For cases in which we need to extract information with a SELECT statement, we can query the tables table in the information_schema. In this example, we included a GROUP BY clause to return only one record for each unique value in the table_schema column.
+
+select table_schema from information_schema.tables group by table_schema;
+
+We can obtain a list of databases from the databases table in the system catalog, abbreviated as sys in queries. The system catalog contains metadata about the database.
+
+SELECT name FROM sys.databases;
+
+We can obtain a list of table names within a database by querying the tables table in the corresponding information_schema. In current versions of SQL Server, we can also query app.sys.tables for the same information.
+
+select * from app.information_schema.tables;
+
+Once we know a table's name, we can query the columns table in the information_schema to obtain its column names.
+
+select COLUMN_NAME, DATA_TYPE from app.information_schema.columns where TABLE_NAME = 'menu';
+
+
