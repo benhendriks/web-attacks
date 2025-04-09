@@ -251,3 +251,56 @@ If you need more details or have specific questions about a database, let me kno
 ---
 
 Feel free to copy and paste this directly into your notes! If you need more detailed examples or clarification on any point, don’t hesitate to ask.
+
+
+mySQL
+
+select version();
+
+select current_user();
+
+select table_schema from information_schema.tables group by table_schema;
+
+select table_name from information_schema.tables where table_schema = 'app';
+
+select column_name, data_type from information_schema.columns where table_schema = 'app' and table_name = 'menu';
+
+Microsoft SQL Server
+
+select @@version;
+
+SELECT SYSTEM_USER;
+
+SELECT name FROM sys.databases;
+
+select * from app.information_schema.tables;
+
+select COLUMN_NAME, DATA_TYPE from app.information_schema.columns where TABLE_NAME = 'menu';
+
+PostgreSQL
+
+select version();
+
+select current_user;
+
+select datname from pg_database;
+
+select table_name from app.information_schema.tables where table_schema = 'public';
+
+select column_name, data_type from app.information_schema.columns where table_name = 'menu';
+
+Oracle
+
+select * from v$version;
+
+select user from dual;
+
+select owner from all_tables group by owner;
+
+select table_name from all_tables where owner = 'SYS' order by table_name;
+
+select column_name, data_type from all_tab_columns where table_name = 'MENU';
+
+
+
+
