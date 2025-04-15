@@ -1,43 +1,62 @@
 When we write a SELECT query, we need to specify what data we want and where we want it from. The "what" is formatted as a list of one or more columns. We can also use an asterisk (*) as a wildcard to query for all columns in a table. The "where" indicates which tables we want to use. We'll start with a basic example that selects data from one table.
 
+```sql
 SELECT * FROM menu;
+```
 
 We can use the version() function to retrieve the version of a MySQL database.
 
+```sql
 select version();
+```
 
 We can obtain the user account currently connected to a MySQL database with the current_user() or system_user() functions. We should keep in mind that this is a user account for the database, and does not necessarily correspond to an OS-level user.
 
+```sql
 select current_user();
+```
 
 For cases in which we need to extract information with a SELECT statement, we can query the tables table in the information_schema. In this example, we included a GROUP BY clause to return only one record for each unique value in the table_schema column.
 
+```sql
 select table_schema from information_schema.tables group by table_schema;
+```
 
 We can obtain a list of databases from the databases table in the system catalog, abbreviated as sys in queries. The system catalog contains metadata about the database.
 
+```sql
 SELECT name FROM sys.databases;
+```
 
 We can obtain a list of table names within a database by querying the tables table in the corresponding information_schema. In current versions of SQL Server, we can also query app.sys.tables for the same information.
 
+```sql
 select * from app.information_schema.tables;
+```
 
 Once we know a table's name, we can query the columns table in the information_schema to obtain its column names.
 
+```sql
 select COLUMN_NAME, DATA_TYPE from app.information_schema.columns where TABLE_NAME = 'menu';
+```
 
 This will show you all tables in the app database — no line breaks, just one clean line.
 
+```sql
 SELECT * FROM app.information_schema.tables;
+```
 
 Since you already know your Table exists, just do:
 
+```sql
 SELECT * FROM app.dbo.nameTable;
+```
 
 Or if you're already using app as your current DB (most likely), this is enough:
 
+```sql
 SELECT * FROM dbo.nameTable;
-
+```
 
 Absolutely! Here's the detailed summary of **SQL Injection** techniques for **MySQL**, **Oracle**, **PostgreSQL**, and **SQL Server** that you can easily copy and paste into your notes:
 
@@ -255,51 +274,100 @@ Feel free to copy and paste this directly into your notes! If you need more deta
 
 mySQL
 
+```sql
 select version();
+```
 
+```sql
 select current_user();
+```
 
+```sql
 select table_schema from information_schema.tables group by table_schema;
+```
 
+```sql
 select table_name from information_schema.tables where table_schema = 'app';
+```
 
+```sql
 select column_name, data_type from information_schema.columns where table_schema = 'app' and table_name = 'menu';
+```
 
 Microsoft SQL Server
 
+```sql
 select @@version;
+```
 
+```sql
 SELECT SYSTEM_USER;
+```
 
+```sql
 SELECT name FROM sys.databases;
+```
 
+```sql
 select * from app.information_schema.tables;
+```
 
+```sql
 select COLUMN_NAME, DATA_TYPE from app.information_schema.columns where TABLE_NAME = 'menu';
+```
 
 PostgreSQL
 
+```sql
 select version();
+```
 
+```sql
 select current_user;
+```
 
+```sql
 select datname from pg_database;
+```
 
+```sql
 select table_name from app.information_schema.tables where table_schema = 'public';
+```
 
+```sql
 select column_name, data_type from app.information_schema.columns where table_name = 'menu';
+```
 
 Oracle
 
+```sql
 select * from v$version;
+```
 
+```sql
 select user from dual;
+```
 
+```sql
 select owner from all_tables group by owner;
+```
 
+```sql
 select table_name from all_tables where owner = 'SYS' order by table_name;
+```
 
+```sql
 select column_name, data_type from all_tab_columns where table_name = 'MENU';
+```
+
+
+
+
+
+
+
+
+
 
 
 Errorbase
