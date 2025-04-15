@@ -302,5 +302,10 @@ select table_name from all_tables where owner = 'SYS' order by table_name;
 select column_name, data_type from all_tab_columns where table_name = 'MENU';
 
 
+Errorbase
+MySQL = extractvalue('',concat('>',version()))
+SQL Server = cast(@@version as integer)
+PostgreSQL = cast(version() as integer)
+Oracle = to_char(dbms_xmlgen.getxml('select "'|| (select substr(banner,0,30) from v$version where rownum=1)||'" from sys.dual'))
 
 
