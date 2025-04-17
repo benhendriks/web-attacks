@@ -410,7 +410,7 @@ CAST((SELECT name FROM target.sys.tables WHERE name LIKE '%flag%';) as int)
 ```sql
 CAST((
   SELECT name 
-  FROM exercise.sys.columns 
+  FROM target.sys.columns 
   WHERE object_id = OBJECT_ID('target.dbo.flags')
   ORDER BY name
   OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
