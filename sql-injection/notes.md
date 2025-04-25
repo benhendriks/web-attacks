@@ -455,7 +455,15 @@ To detect and exploit UNION-based SQL Injection vulnerabilities and identify the
 ```sql
 ' order by 1--
 ```
-or for burp 
+
+#### or for burp 
+Always URL encode your payload if you paste it into Burp:
+
+    * ' → %27
+
+    * Space → %20
+
+    * -- - → %2D%2D%20-
 
 ```sql
 %25%27+order+by+4+--
