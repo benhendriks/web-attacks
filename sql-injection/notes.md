@@ -642,4 +642,31 @@ space ( )	        %20
 =	                %3D
 -- (comment) 	    -- or --+
 
+### Reading and Writing Files
+
+```sql
+create table tmp(data text);
+copy tmp from '/etc/passwd';
+select * from tmp;
+```
+
+The pg_read_file() function reads files on the server filesystem (not client-side) and has the following valid forms:
+
+```sql
+pg_read_file(filename text [, offset integer, length integer [, missing_ok boolean]])
+```
+
+- filename: path relative to the data directory (you can't read arbitrary files).
+- offset (optional): start position in bytes.
+- length (optional): number of bytes to read.
+- missing_ok (optional, PostgreSQL 13+): if true, returns NULL instead of error if file doesn't exist.
+
+```sql
+SELECT pg_read_file('postgresql.conf');  -- read full file
+SELECT pg_read_file('postgresql.conf', 0, 1000);  -- first 1000 bytes
+SELECT pg_read_file('postgresql.conf', 0, 1000, true);  -- ignore if missing
+```
+
+Only superusers can use pg_read_file(). If you run this as a normal user, you'll get a permission denied error.
+
 
