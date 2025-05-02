@@ -669,4 +669,16 @@ SELECT pg_read_file('postgresql.conf', 0, 1000, true);  -- ignore if missing
 
 Only superusers can use pg_read_file(). If you run this as a normal user, you'll get a permission denied error.
 
+## In MySQL, we can read files using the LOAD_FILE() function. However, there is a catch. MySQL has a secure_file_priv system variable that restricts which directories can be used to read or write files. Some versions of MySQL do not set this variable by default, which means MySQL can potentially read or write any file (subject to OS file permissions). Setting the value to an empty string ("") is the same as leaving the value blank. Other versions, or hardened configurations, will set this variable to a specific directory. We can check the value of this variable with
 
+```sql
+SELECT @@GLOBAL.secure_file_priv;
+```
+
+```sql
+SELECT * FROM users INTO OUTFILE '/var/lib/mysql-files/test.txt'
+```
+
+```sql
+SELECT LOAD_FILE('/var/lib/mysql-files/test.txt')
+```
