@@ -80,7 +80,7 @@ extractvalue('', concat('>', (
 ```sql
 extractvalue('', concat('>', (
   select substring(password, 1, 32) 
-  from piwigo_users 
+  from target_users 
   limit 1 offset 0
 )))
 ```
