@@ -790,4 +790,8 @@ sqlmap -r burp_sql-server.txt \
   --search -C flag
 ```
 
+#### Find the value of the X-Powered-By header
 
+```shell
+curl -I http://target-site.com
+```
