@@ -20,6 +20,8 @@ extractvalue('', concat('>', (
 
 **Purpose**: Retrieve all database names on the server.
 
+The group_concat() function is unique to MySQL. Current versions of Microsoft SQL Server and PostgreSQL have a very similar STRING_AGG() function. Additionally, current versions of Oracle DB have a LISTAGG() function that is similar to the STRING_AGG() functions.
+
 ---
 
 ## 2. List All Tables in the `target` Database
@@ -72,6 +74,8 @@ extractvalue('', concat('>', (
 ```
 
 **Purpose**: List column names in the `target_users` table.
+
+Microsoft SQL Server has a nearly identical SUBSTRING() function and Oracle DB has a SUBSTR() function that takes the same parameters. PostgreSQL has two different functions for substrings. The MySQL SUBSTRING() function follows the same parameter format as the SUBSTR() function. The SUBSTRING() function must include a from or for keyword in the function call.
 
 ---
 
