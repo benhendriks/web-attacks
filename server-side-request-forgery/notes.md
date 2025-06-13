@@ -75,6 +75,7 @@ Server Makes Internal Request:
     - Monitor server traffic for unusual outbound HTTP requests
 
 
+
 ---
 
 ```shell
@@ -139,6 +140,13 @@ In numeric form:
 ```bash
 sudo chmod 644 filename.txt
 
+| Character | 1st Encode | 2nd Encode |
+| --------- | ---------- | ---------- |
+| `/`       | `%2F`      | `%252F`    |
+| `:`       | `%3A`      | `%253A`    |
+| `\n`      | `%0A`      | `%250A`    |
+| space     | `%20`      | `%2520`    |
+| `%`       | `%25`      | `%2525`    |
 
 
 
