@@ -140,6 +140,12 @@ In numeric form:
 ```bash
 sudo chmod 644 filename.txt
 
+---
+
+#### When Double Encoding is Required:
+
+You only need to double-encode non-alphanumeric and reserved characters, such as:
+
 | Character | 1st Encode | 2nd Encode |
 | --------- | ---------- | ---------- |
 | `/`       | `%2F`      | `%252F`    |
