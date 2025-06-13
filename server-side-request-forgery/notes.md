@@ -1,8 +1,86 @@
+# 🌐 What is SSRF? (Server-Side Request Forgery)
 
+## 🧠 Definition
+
+**Server-Side Request Forgery (SSRF)** is a web security vulnerability that allows an attacker to make the server perform HTTP requests to **internal or external resources** on their behalf.
+
+In SSRF, the attacker abuses functionality that fetches data from a URL, such as:
+
+- Image URL previews
+- PDF renderers
+- URL validators
+- Webhooks or callbacks
+
+---
+
+## ⚙️ How SSRF Works
+
+A vulnerable application accepts a user-supplied URL and makes a server-side HTTP request, like:
+
+```http
+GET /fetch?url=http://example.com
+``` 
+
+An attacker can change the url parameter to:
+
+```http
+/fetch?url=http://localhost:8000/admin
+```
+
+#### 🔍 Why SSRF is Dangerous
+
+SSRF lets attackers:
+
+    - Access internal services (e.g., http://localhost, http://127.0.0.1, http://backend)
+
+    - Enumerate cloud metadata services (e.g., AWS: http://169.254.169.254)
+
+    - Bypass firewalls and reach networks inaccessible from the outside
+
+    - Read internal configuration files or sensitive endpoints
+
+    - Potentially trigger Remote Code Execution (RCE) or leak credentials
+
+#### 🧪 SSRF Example
+
+Vulnerable Request:
+```http
+GET /fetch?url=http://example.com
+```
+
+Exploited by Attacker:
+```http
+GET /fetch?url=http://localhost:8000/admin
+```
+
+Server Makes Internal Request:
+```http
+[Server] --> http://localhost:8000/admin
+```
+
+🛡️ How to Prevent SSRF
+
+    - Whitelist allowed URLs or domains
+
+    - Validate user input strictly (e.g., disallow IPs, internal hostnames)
+
+    - Block requests to:
+
+        localhost, 127.0.0.1, ::1
+
+        Reserved IP ranges (10.0.0.0/8, 192.168.0.0/16, etc.)
+
+    - Use network segmentation: separate internal APIs from public-facing web apps
+
+    - Monitor server traffic for unusual outbound HTTP requests
+
+
+---
 
 ```shell
 cd /var/www/html
 ```
+
 
 ```shell
 sudo echo "Here is your 200 OK response" > target
@@ -60,6 +138,8 @@ In numeric form:
 ### 1️⃣ Single File
 ```bash
 sudo chmod 644 filename.txt
+
+
 
 
 
