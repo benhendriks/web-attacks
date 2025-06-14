@@ -155,6 +155,14 @@ You only need to double-encode non-alphanumeric and reserved characters, such as
 | `%`       | `%25`      | `%2525`    |
 
 
+Just some general advice regarding SSRF:
+    - 1) Have a shelf-prepared payload that requires the least possible changes: Pick a username and password that you know the post data length will be static. Therefore, you won't need to change Content-Length each time.
+    - 2) Important note: If you are sending your SSRF payload through the web application itself, you'll need to encode your payload once. If you are sending it through repeater, you'll need to encode it twice.
+    - 3) Make sure the content-type field is correct.
+    - 4) If you have a consistent payload, you only need to change the URI and HOST field.
+    - 5) In post requests, there is 2 new lines between the HTTP header requests and post data (%0A%0A).
+    - 6) Gopher runs on port 70. Make sure to specify the correct port number in your URL. 
+
 ```shell
 file:///app/target.txt
 ```
