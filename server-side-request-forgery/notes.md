@@ -139,6 +139,7 @@ In numeric form:
 ### 1️⃣ Single File
 ```bash
 sudo chmod 644 filename.txt
+```
 
 ---
 
