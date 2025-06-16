@@ -152,9 +152,14 @@ You only need to double-encode non-alphanumeric and reserved characters, such as
 | `/`       | `%2F`      | `%252F`    |
 | `:`       | `%3A`      | `%253A`    |
 | `\n`      | `%0A`      | `%250A`    |
+| `\r`      | `%0D`      | `%250D`    |
 | space     | `%20`      | `%2520`    |
 | `%`       | `%25`      | `%2525`    |
-
+| `&`       | `%26`      | `%2526`    |
+| `=`       | `%3D`      | `%253D`    |
+| `?`       | `%3F`      | `%253F`    |
+| `#`       | `%23`      | `%2523`    |
+| `@`       | `%40`      | `%2540`    |
 
 ####  General advice regarding SSRF:
     - 1) Have a shelf-prepared payload that requires the least possible changes: Pick a username and password that you know the post data length will be static. Therefore, you wont need to change Content-Length each time.
