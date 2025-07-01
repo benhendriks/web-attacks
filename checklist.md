@@ -65,6 +65,8 @@
 
 ## Banner grabbing
 
+#### NMAP
+
 ```bash
 sudo nmap -p22,80 --script banner 192.168.45.211 
 ```
@@ -74,10 +76,43 @@ sudo nmap -p22,80 --script banner 192.168.45.211
 ```shell
 PORT   STATE SERVICE
 22/tcp open  ssh
- banner: SSH-2.0-OpenSSH_8.4
+banner: SSH-2.0-OpenSSH_8.4
 80/tcp open  http
- banner: HTTP/1.1 200 OK
- Server: Apache/2.4.41 (Ubuntu)
+banner: HTTP/1.1 200 OK
+Server: Apache/2.4.41 (Ubuntu)
+```
+
+#### CURL
+
+-i or --include = To get the server headers on port 80 of the target
+-I or --head = If we only want the headers.
+
+```shell
+curl -I http://target
+```
+
+Example Output 
+
+```shell
+HTTP/1.1 200 OK
+Date: Thu, 18 Apr 2024 18:22:37 GMT
+Server: Apache/2.4.52 (Ubuntu)
+Content-Type: text/html; charset=utf-8
+Content-Length: 2546
+Vary: Accept-Encoding
+```
+
+#### NETCAT
+
+-v = Option to enable verbose output.
+
+```shell
+netcat -v target 22
+```
+
+```shell
+target [192.168.50.108] 22 (ssh) open
+SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.6
 ```
 
 # 📘 Nmap Common Options Table
@@ -105,4 +140,126 @@ PORT   STATE SERVICE
 | `-v`, `-vv`            | Increase verbosity level                                                     |
 
 ---
+
+### Discovering Running Services
+
+-Pn = Set -Pn to skip host discover
+
+```shell
+nmap -Pn target
+```
+
+-Sv = Put the -sV flag for version detection, is often sufficient during web application assessments 
+
+```shell
+nmap -sV target
+```
+
+--script = We can run scripts as part of our scan by setting the --script option, followed by the script name we want to run.
+
+```shell
+nmap -p 80 --script http-methods target
+```
+
+---
+
+## Manual HTTP Endpoint Discovery
+
+
+Web developers use robots.txt to instruct web crawlers on what portions of the website they can crawl. XML sitemaps are an alternative to robots.txt and provide additional information about the site, such as the last time a page was modified.
+
+## Automated HTTP Endpoint Discovery
+
+### hakrawler
+
+```shell
+sudo apt install hakrawler
+```
+
+```shell
+which hakrawler
+```
+
+-u = To limit output to unique URLs
+-proxy = Option to proxy the requests through another tool
+-X = Option appends an extension to each word
+
+```shell
+echo "http://target" | hakrawler -u
+```
+
+```shell
+hakrawler -url https://target.com > output.txt
+```
+
+If you want to include subdomains, JavaScript files, etc.:
+
+```shell
+hakrawler -url https://target.com -depth 2 -plain > urls.txt
+```
+
+Append to an existing file instead of overwriting:
+
+```shell
+hakrawler -url https://target.com >> results.txt
+```
+
+If you want to sort and remove duplicates in one command:
+
+```shell
+hakrawler -url https://target.com | sort -u > clean-urls.txt
+```
+
+---
+
+#### Dirb
+
+```shell
+dirb http://target
+```
+
+Kali Linux includes several wordlists at /usr/share/wordlists
+
+```shell
+ls -alh /usr/share/wordlists
+```
+
+## Information Disclosure
+
+Oracle database software typically include ORA in error codes.
+
+Create wordlist
+
+```shell
+cat users.txt
+```
+
+We'll include "foo" as a control element.
+
+```txt
+foo
+tomjones
+tom.jones
+t.jones
+tom_jones
+t_jones
+```
+
+```shell
+ffuf -w users.txt -u http://target/auth/login -X POST -d 'username=FUZZ&password=bar' -H 'Content-Type: application/x-www-form-urlencoded'
+```
+
+## Basic Host Enumeration and OS Detection
+
+```shell
+nmap target
+```
+
+-O = Argument to enable operating system (OS) detection feature. 
+-Pn = To disable ping probes because we know the host is up.
+
+```shell
+sudo nmap -O -Pn target
+```
+
 
